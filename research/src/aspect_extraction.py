@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from ollama import chat
 
 
-# Define the output schema
 class AspectResult(BaseModel):
     aspect: str
     sentiment: Literal["positive", "negative", "neutral"]
@@ -18,10 +17,7 @@ class ReviewAnalysis(BaseModel):
     ]
 
 
-# Initialize Ollama extraction
-
 def extract_aspects(review: str):
-
     response = chat(
         model="qwen3.5:9b",
         think=False,
@@ -96,11 +92,10 @@ provided schema.
         }
     )
 
-    # Check raw model response
+
     content = response.message.content or ""
 
     if not content.strip():
-
         print("\n[DEBUG] Model returned empty content.")
 
         print(
@@ -115,11 +110,9 @@ provided schema.
 
         print("Full response:", response)
 
-        raise RuntimeError(
-            "Ollama returned empty content."
-        )
+        raise RuntimeError("Ollama returned empty content.")
 
-    # Validate structured JSON
+
     try:
         result = ReviewAnalysis.model_validate_json(content)
 
@@ -138,15 +131,12 @@ from pathlib import Path
 import json
 
 if __name__ == "__main__":
-
     reviews = [
         "The battery lasts for two days and "
         "the screen is very bright.",
-
         "The laptop has excellent battery life "
         "and a lightweight design, but its display "
         "brightness is disappointing.",
-
         "The keyboard feels cheap, the fan is noisy, "
         "and the laptop gets hot during gaming."
     ]
@@ -154,7 +144,6 @@ if __name__ == "__main__":
     results = []
 
     for i, review in enumerate(reviews, start=1):
-
         print(f"\nProcessing review {i}...")
 
         try:
@@ -175,10 +164,8 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Error: {e}")
 
-    # Save results
-    output_dir = (
-        Path(__file__).resolve().parents[1] / "outputs"
-    )
+
+    output_dir = Path(__file__).resolve().parents[1] / "outputs"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     output_file = output_dir / "aspect_extraction_demo.json"

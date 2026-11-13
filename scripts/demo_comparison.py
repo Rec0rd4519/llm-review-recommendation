@@ -1,4 +1,4 @@
-"""Illustrative ranking on fictional data, not the reported research experiment."""
+"""Illustrate the ranking rules on fictional demo data."""
 from pathlib import Path
 import sys,json
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))

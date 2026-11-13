@@ -1,6 +1,6 @@
 # Offline ranking comparison
 
-This experiment compares four ranking strategies using 253 user histories and 72 simulated development queries. It measures how rankings change when current requirements and query-conditioned evidence are added to historical matching.
+This experiment compares four ranking strategies using 253 user histories and 72 simulated development queries. It examines changes in ranking when current requirements and query-selected evidence are added to historical matching.
 
 ## Setup
 
@@ -15,7 +15,7 @@ Without ordinary preferences, both hybrid strategies use H. Preference weights f
 
 All strategies share product-type recall, hard-constraint checks, and exclusion of previously reviewed products. History-only therefore describes scoring within a query-filtered candidate pool. I and I_Q use the same 8,050-snippet training corpus, interpreter, and catalog fields; only snippet selection differs. The app's own preference scoring uses stored profile examples, while this comparison uses the full aligned corpus for I.
 
-The Cartesian pairing produces 18,216 combinations. These reuse the same histories and queries and are not independently observed shopping tasks. No parameters were tuned after reviewing results.
+The Cartesian pairing produces 18,216 combinations. Histories and queries are reused across combinations; the combinations are artificial shopping scenarios. No parameters were tuned after reviewing results.
 
 | Outcome | Combinations |
 |---|---:|
@@ -26,7 +26,7 @@ The Cartesian pairing produces 18,216 combinations. These reuse the same histori
 | Comparison needs clarification | 253 |
 | Total | 18,216 |
 
-The primary subset requires at least one ordinary preference and five eligible unseen products. It contains **4,299 combinations across 17 queries**. Selection depends on candidate availability, not scores. Other outcomes remain in the coverage totals.
+The primary subset requires at least one ordinary preference and five eligible unseen products. It contains **4,299 combinations across 17 queries**. Selection depends on candidate availability, not scores. The coverage table also retains outcomes outside this subset.
 
 ## Ranking results
 
@@ -43,7 +43,7 @@ Internal rule support evaluates ordinary preferences using the shared full-corpu
 
 Intent-only changes the ranking substantially but produces many tied scores. Fixed-weight retains more of the historical ordering. Fixed-weight and query-conditioned Top-5 sets overlap by **97.10%** on average. BM25 selection changes the aggregate intent score in only **4 of 318 item-query feature pairs** containing ordinary preferences.
 
-One example is the query “I would like a shampoo with a mild scent and thick lather.” For product B085J24382, the full corpus yields I = 0.75; BM25 selection misses an interpretable mild-scent snippet and yields I_Q = 0.5. The lower internal support rate for query-conditioned ranking does not establish its true relevance quality. Query-item relevance labels were unavailable.
+One example is the query “I would like a shampoo with a mild scent and thick lather.” For product B085J24382, the full corpus yields I = 0.75; BM25 selection misses an interpretable mild-scent snippet and yields I_Q = 0.5. Query-item relevance labels were unavailable, so the lower internal support rate cannot establish true relevance quality.
 
 ## Held-out interactions
 
@@ -62,14 +62,14 @@ For one target, HR@K records a hit in the first K positions, NDCG is 1/log2(rank
 
 ## Timing and verification
 
-Evidence-feature computation across the 72 queries took 18.364 ms for I and 16.961 ms for I_Q in the recorded run. These timers exclude index construction, history loading, candidate filtering, model inference, HTTP handling, and file writes. Warm score/sort timing is reported separately in the aggregate JSON. The timings are small-corpus diagnostics, not end-to-end latency benchmarks.
+Evidence-feature computation across the 72 queries took 18.364 ms for I and 16.961 ms for I_Q in the recorded run. These timers exclude index construction, history loading, candidate filtering, model inference, HTTP handling, and file writes. Warm score/sort timing is reported separately in the aggregate JSON. These small-corpus timings measure feature computation, not end-to-end latency.
 
 An earlier run included trace-file writing in the conditioned timer. The final run moved writes outside that timer. Rankings, coverage, primary metrics, and holdout results matched between runs. Verification reconstructed all 50,556 strategy ranking records from their saved components. The comparison made no new LLM calls and collected no new relevance labels.
 
 ## Interpretation and reproduction
 
-The experiment demonstrates different ranking behavior, but provides no independent evidence that BM25-conditioned scoring improves recommendation accuracy. Histories and simulated development queries are reused, rule-based diagnostics share the scoring logic, and no significance tests were conducted. The app retains fixed-weight scoring; query-conditioned ranking remains experimental.
+The strategies produce different rankings. The available diagnostics do not independently establish an accuracy gain from BM25-conditioned scoring. Histories and simulated development queries are reused, rule-based diagnostics share the scoring logic, and no significance tests were conducted. The app retains fixed-weight scoring; query-conditioned ranking remains experimental.
 
-Aggregate results are included in [JSON](original_research_summary.json) and [CSV](original_research_strategy_summary.csv). The original run also retained its protocol, query snapshots, candidate outcomes, per-user rankings, selected evidence, holdout records, and source hashes. Those detailed artifacts remain private.
+Aggregate results are included in [JSON](original_research_summary.json) and [CSV](original_research_strategy_summary.csv). The original run also retained its protocol, query snapshots, candidate outcomes, per-user rankings, selected evidence, holdout records, and source hashes. Detailed artifacts are retained outside this repository.
 
 See [reproduction instructions](../docs/REPRODUCIBILITY.md) for the prepared research inputs. The public fictional demo uses a different dataset.

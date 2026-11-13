@@ -1,4 +1,4 @@
-"""Checks for the public fictional corpus; no model server or private runs needed."""
+"""Demo integration checks with mocked model responses."""
 from pathlib import Path
 import copy,json,sys,tempfile,unittest
 from unittest.mock import patch

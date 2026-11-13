@@ -1,10 +1,7 @@
-"""Preregistered preliminary ranking comparison, no generation or prototype edits.
+"""Compare four ranking rules on reused development queries.
 
-Primary: artificial Cartesian pairing of253 histories with72 reused simulated
-queries. No query-item relevance labels exist: report diagnostic/ranking metrics.
-Secondary: history-only next-interaction holdout, never pretend heldout reviews
-are pre-purchase queries. Preserve all empty/clarification outcomes.
-"""
+The primary comparison pairs histories and simulated queries.
+A separate history-only evaluation uses observed held-out interactions."""
 from collections import Counter,defaultdict
 from itertools import combinations
 from pathlib import Path
@@ -98,7 +95,7 @@ def run(out):
     save(out/'protocol.json',protocol)
     save(out/'query_intents_snapshot.json',[{'intent_id':r['intent_id'],'query':r['original_query'],'status':r['status'],'intent':r['intent']} for r in records])
     save(out/'bm25_index_manifest.json',engine.review_bm25_manifest)
-    # Score identity with the frozen retriever, including an item filter.
+    # Check scores and tie-breaking against the retriever.
     for q in [r['original_query'] for r in records[:5]]:
         raw=global_bm25_scores(feature.index,q)
         expected=sorted(raw,key=lambda i:(-raw[i],feature.index.documents[i]['document_id']))[:5]
@@ -198,8 +195,8 @@ def run(out):
     for name in STRATEGIES:
         qmeans=[averages(per[name]) for per in query_metrics.values()]
         macro[name]={'unique_queries':len(qmeans),**{metric:statistics.mean(q[metric] for q in qmeans) for metric in primary[name] if metric!='cases'}}
-    # Genuine observed holdout: H only. No synthetic intent is inferred from
-    # target text/title/rating, and no heldout evidence enters model inputs.
+    # Evaluate history-only scoring on observed holdout interactions.
+    # Keep target text, titles, ratings, and held-out reviews out of intent inputs.
     train=read_csv(benchmark/'All_Beauty.train.csv');valid=read_csv(benchmark/'All_Beauty.valid.csv');test=read_csv(benchmark/'All_Beauty.test.csv')
     train_pairs={(r['user_id'],r['parent_asin']) for r in train}
     assert len(test)==253 and not train_pairs&{(r['user_id'],r['parent_asin']) for r in test}

@@ -4,8 +4,6 @@ import csv
 import json
 
 
-# Paths and configuration
-
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "processed"
 
@@ -14,18 +12,10 @@ ASPECT_FILE = DATA_DIR / "profile_aspect_records.jsonl"
 
 OUTPUT_DIR = DATA_DIR
 
-REVIEW_ASPECT_OUTPUT = (
-    OUTPUT_DIR / "user_review_aspect_sentiment.jsonl"
-)
-USER_PROFILE_OUTPUT = (
-    OUTPUT_DIR / "user_profiles.jsonl"
-)
-USER_PROFILE_CSV = (
-    OUTPUT_DIR / "user_profile_aspect_scores.csv"
-)
-SUMMARY_OUTPUT = (
-    OUTPUT_DIR / "user_profile_summary.json"
-)
+REVIEW_ASPECT_OUTPUT = OUTPUT_DIR / "user_review_aspect_sentiment.jsonl"
+USER_PROFILE_OUTPUT = OUTPUT_DIR / "user_profiles.jsonl"
+USER_PROFILE_CSV = OUTPUT_DIR / "user_profile_aspect_scores.csv"
+SUMMARY_OUTPUT = OUTPUT_DIR / "user_profile_summary.json"
 
 SENTIMENT_SCORE = {
     "positive": 1.0,
@@ -34,16 +24,11 @@ SENTIMENT_SCORE = {
 }
 
 
-# Utility functions
-
 def load_jsonl(path):
-
     records = []
 
     with open(path, "r", encoding="utf-8-sig") as f:
-
         for line_number, line in enumerate(f, 1):
-
             if not line.strip():
                 continue
 
@@ -51,22 +36,16 @@ def load_jsonl(path):
                 records.append(json.loads(line))
 
             except json.JSONDecodeError as exc:
-
-                raise ValueError(
-                    f"Invalid JSON at line {line_number}: {exc}"
-                )
+                raise ValueError(f"Invalid JSON at line {line_number}: {exc}")
 
     return records
 
 
 def write_jsonl(path, records):
-
     temp = path.with_suffix(path.suffix + ".tmp")
 
     with open(temp, "w", encoding="utf-8") as f:
-
         for record in records:
-
             f.write(
                 json.dumps(
                     record,
@@ -78,11 +57,9 @@ def write_jsonl(path, records):
 
 
 def write_json(path, data):
-
     temp = path.with_suffix(path.suffix + ".tmp")
 
     with open(temp, "w", encoding="utf-8") as f:
-
         json.dump(
             data,
             f,
@@ -94,7 +71,6 @@ def write_json(path, data):
 
 
 def write_csv(path, rows):
-
     if not rows:
         raise ValueError("No profile rows to save.")
 
@@ -106,7 +82,6 @@ def write_csv(path, rows):
         encoding="utf-8-sig",
         newline=""
     ) as f:
-
         writer = csv.DictWriter(
             f,
             fieldnames=list(rows[0].keys())
@@ -119,12 +94,10 @@ def write_csv(path, rows):
 
 
 def to_bool(value, field):
-
     if isinstance(value, bool):
         return value
 
     if isinstance(value, str):
-
         value = value.strip().casefold()
 
         if value in ("true", "1", "yes"):
@@ -133,27 +106,21 @@ def to_bool(value, field):
         if value in ("false", "0", "no"):
             return False
 
-    raise ValueError(
-        f"Invalid boolean in {field}: {value}"
-    )
+    raise ValueError(f"Invalid boolean in {field}: {value}")
 
 
 def mean(values):
-
     return (
         sum(values) / len(values)
         if values else None
     )
 
 
-# Load data
-
 print("\n" + "=" * 60)
 print("USER PROFILE CONSTRUCTION")
 print("=" * 60)
 
 for path in (REVIEW_FILE, ASPECT_FILE):
-
     if not path.exists():
         raise FileNotFoundError(path)
 
@@ -177,7 +144,6 @@ user_meta = {}
 nested_counts = Counter()
 
 for review in reviews:
-
     review_id = review.get("train_row_id")
     user_id = review.get("user_id")
 
@@ -189,9 +155,7 @@ for review in reviews:
 
     review_by_id[review_id] = review
 
-    nested_counts[review_id] = len(
-        review.get("aspects", [])
-    )
+    nested_counts[review_id] = len(review.get("aspects", []))
 
     meta = user_meta.setdefault(
         user_id,
@@ -219,43 +183,28 @@ review_aspect_groups = defaultdict(list)
 flat_counts = Counter()
 
 for row in aspect_rows:
-
     review_id = row["train_row_id"]
 
     if review_id not in review_by_id:
-        raise ValueError(
-            f"Unknown review ID: {review_id}"
-        )
+        raise ValueError(f"Unknown review ID: {review_id}")
 
     source = review_by_id[review_id]
 
     if row["user_id"] != source["user_id"]:
-        raise ValueError(
-            f"User ID mismatch: {review_id}"
-        )
+        raise ValueError(f"User ID mismatch: {review_id}")
 
     if row["parent_asin"] != source["parent_asin"]:
-        raise ValueError(
-            f"Item ID mismatch: {review_id}"
-        )
+        raise ValueError(f"Item ID mismatch: {review_id}")
 
-    aspect = str(
-        row.get("profile_aspect", "")
-    ).strip()
+    aspect = str(row.get("profile_aspect", "")).strip()
 
-    sentiment = str(
-        row.get("sentiment", "")
-    ).strip().casefold()
+    sentiment = str(row.get("sentiment", "")).strip().casefold()
 
     if not aspect:
-        raise ValueError(
-            f"Empty aspect in review {review_id}"
-        )
+        raise ValueError(f"Empty aspect in review {review_id}")
 
     if sentiment not in SENTIMENT_SCORE:
-        raise ValueError(
-            f"Invalid sentiment: {sentiment}"
-        )
+        raise ValueError(f"Invalid sentiment: {sentiment}")
 
     valid = to_bool(
         row["evidence_valid"],
@@ -268,9 +217,7 @@ for row in aspect_rows:
     )
 
     if valid == needs_review:
-        raise ValueError(
-            f"Inconsistent evidence flags: {review_id}"
-        )
+        raise ValueError(f"Inconsistent evidence flags: {review_id}")
 
     key = (
         row["user_id"],
@@ -286,17 +233,11 @@ for row in aspect_rows:
 # Verify nested and flat data consistency.
 
 if sum(nested_counts.values()) != len(aspect_rows):
-    raise ValueError(
-        "Nested and flat aspect counts do not match."
-    )
+    raise ValueError("Nested and flat aspect counts do not match.")
 
 for review_id, count in nested_counts.items():
-
     if flat_counts[review_id] != count:
-
-        raise ValueError(
-            f"Aspect count mismatch for review {review_id}"
-        )
+        raise ValueError(f"Aspect count mismatch for review {review_id}")
 
 
 print("Review ID consistency: PASSED")
@@ -314,9 +255,7 @@ duplicate_extra_rows = 0
 mixed_groups = 0
 
 for (user_id, review_id, aspect), rows in review_aspect_groups.items():
-
     if len(rows) > 1:
-
         duplicate_groups += 1
         duplicate_extra_rows += len(rows) - 1
 
@@ -334,12 +273,9 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
         if not to_bool(row["evidence_valid"], "evidence_valid")
     ]
 
-    sentiment_counts = Counter(
-        row["sentiment"] for row in valid_rows
-    )
+    sentiment_counts = Counter(row["sentiment"] for row in valid_rows)
 
     if valid_rows:
-
         scores = [
             SENTIMENT_SCORE[row["sentiment"]]
             for row in valid_rows
@@ -351,7 +287,6 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
         has_negative = sentiment_counts["negative"] > 0
 
         if has_positive and has_negative:
-
             polarity = "mixed"
             mixed_groups += 1
 
@@ -365,7 +300,6 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
             polarity = "neutral"
 
     else:
-
         score = None
         polarity = "excluded_review_required"
 
@@ -378,7 +312,6 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
     })
 
     evidence_records = [
-
         {
             "evidence": row["evidence"],
             "sentiment": row["sentiment"],
@@ -386,31 +319,21 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
                 row["evidence_valid"],
                 "evidence_valid"
             ),
-            "evidence_match_type": row.get(
-                "evidence_match_type", ""
-            )
+            "evidence_match_type": row.get("evidence_match_type", "")
         }
-
         for row in rows
     ]
 
     review_aspect_records.append({
-
         "user_id": user_id,
-
         "train_row_id": review_id,
-
         "parent_asin": first["parent_asin"],
-
         "rating": first.get("rating"),
-
         "profile_aspect": aspect,
-
         "raw_aspect_labels": sorted({
             str(row.get("raw_aspect", ""))
             for row in rows
         }),
-
         "parent_category": (
             categories[0]
             if len(categories) == 1
@@ -419,31 +342,20 @@ for (user_id, review_id, aspect), rows in review_aspect_groups.items():
                 if categories else None
             )
         ),
-
         "mapping_statuses": sorted({
             str(row.get("mapping_status", "unknown"))
             for row in rows
         }),
-
         "profile_mapping_statuses": sorted({
             str(row.get("profile_mapping_status", "unknown"))
             for row in rows
         }),
-
         "valid_evidence_count": len(valid_rows),
-
         "excluded_evidence_count": len(excluded_rows),
-
-        "sentiment_evidence_counts": dict(
-            sentiment_counts
-        ),
-
+        "sentiment_evidence_counts": dict(sentiment_counts),
         "review_aspect_sentiment_score": score,
-
         "review_aspect_polarity": polarity,
-
         "evidence_records": evidence_records
-
     })
 
 
@@ -454,7 +366,6 @@ print("\n[5] Building user-aspect profiles")
 user_aspect_groups = defaultdict(list)
 
 for record in review_aspect_records:
-
     key = (
         record["user_id"],
         record["profile_aspect"]
@@ -466,7 +377,6 @@ for record in review_aspect_records:
 user_aspect_profiles = []
 
 for (user_id, aspect), records in user_aspect_groups.items():
-
     valid_records = [
         record for record in records
         if record["review_aspect_sentiment_score"] is not None
@@ -485,22 +395,18 @@ for (user_id, aspect), records in user_aspect_groups.items():
     preference_score = mean(scores)
 
     if preference_score is None:
-
         direction = "insufficient_evidence"
         strength = None
 
     elif preference_score > 0:
-
         direction = "positive"
         strength = abs(preference_score)
 
     elif preference_score < 0:
-
         direction = "negative"
         strength = abs(preference_score)
 
     else:
-
         direction = "neutral"
         strength = 0.0
 
@@ -512,10 +418,7 @@ for (user_id, aspect), records in user_aspect_groups.items():
     evidence_sentiments = Counter()
 
     for record in valid_records:
-
-        evidence_sentiments.update(
-            record["sentiment_evidence_counts"]
-        )
+        evidence_sentiments.update(record["sentiment_evidence_counts"])
 
     categories = sorted({
         record["parent_category"]
@@ -526,21 +429,13 @@ for (user_id, aspect), records in user_aspect_groups.items():
     evidence_examples = []
 
     for record in valid_records:
-
         for evidence in record["evidence_records"]:
-
             if evidence["evidence_valid"]:
-
                 evidence_examples.append({
-
                     "train_row_id": record["train_row_id"],
-
                     "parent_asin": record["parent_asin"],
-
                     "evidence": evidence["evidence"],
-
                     "sentiment": evidence["sentiment"]
-
                 })
 
             if len(evidence_examples) >= 5:
@@ -550,11 +445,8 @@ for (user_id, aspect), records in user_aspect_groups.items():
             break
 
     user_aspect_profiles.append({
-
         "user_id": user_id,
-
         "profile_aspect": aspect,
-
         "parent_category": (
             categories[0]
             if len(categories) == 1
@@ -563,78 +455,56 @@ for (user_id, aspect), records in user_aspect_groups.items():
                 if categories else None
             )
         ),
-
         "mapping_statuses": sorted({
             status
             for record in records
             for status in record["mapping_statuses"]
         }),
-
         "profile_mapping_statuses": sorted({
             status
             for record in records
             for status in record["profile_mapping_statuses"]
         }),
-
         "support_review_count": len(valid_records),
-
         "excluded_only_review_count": len(excluded_records),
-
         "total_review_aspect_groups": len(records),
-
         "valid_evidence_count": sum(
             record["valid_evidence_count"]
             for record in records
         ),
-
         "excluded_evidence_count": sum(
             record["excluded_evidence_count"]
             for record in records
         ),
-
         "positive_evidence_count": evidence_sentiments["positive"],
-
         "neutral_evidence_count": evidence_sentiments["neutral"],
-
         "negative_evidence_count": evidence_sentiments["negative"],
-
         "positive_review_count": polarity_counts["positive"],
-
         "neutral_review_count": polarity_counts["neutral"],
-
         "negative_review_count": polarity_counts["negative"],
-
         "mixed_review_count": polarity_counts["mixed"],
-
         "preference_score": (
             round(preference_score, 6)
             if preference_score is not None else None
         ),
-
         "preference_strength": (
             round(strength, 6)
             if strength is not None else None
         ),
-
         "preference_direction": direction,
-
         "has_conflicting_reviews": (
             polarity_counts["positive"] > 0
             and polarity_counts["negative"] > 0
         ) or polarity_counts["mixed"] > 0,
-
         "source_review_ids": sorted({
             record["train_row_id"]
             for record in records
         }),
-
         "source_item_ids": sorted({
             record["parent_asin"]
             for record in records
         }),
-
         "evidence_examples": evidence_examples
-
     })
 
 
@@ -654,49 +524,35 @@ print("\n[6] Assembling user profiles")
 profiles_by_user = defaultdict(list)
 
 for profile in user_aspect_profiles:
-
     profiles_by_user[profile["user_id"]].append(profile)
 
 
 user_profiles = []
 
 for user_id, meta in user_meta.items():
-
     user_aspects = profiles_by_user.get(
         user_id,
         []
     )
 
     user_profiles.append({
-
         "user_id": user_id,
-
         "review_count": len(meta["review_ids"]),
-
-        "reviews_with_aspects": len(
-            meta["reviews_with_aspects"]
-        ),
-
+        "reviews_with_aspects": len(meta["reviews_with_aspects"]),
         "mean_overall_rating": (
             round(mean(meta["ratings"]), 4)
             if meta["ratings"] else None
         ),
-
         "aspect_profile_count": len(user_aspects),
-
         "valid_aspect_profile_count": sum(
             1 for aspect in user_aspects
             if aspect["support_review_count"] > 0
         ),
-
         "aspects": user_aspects
-
     })
 
 
-user_profiles.sort(
-    key=lambda row: row["user_id"]
-)
+user_profiles.sort(key=lambda row: row["user_id"])
 
 
 # Calculate summary statistics
@@ -752,120 +608,70 @@ assert sum(
 
 
 summary = {
-
     "total_users": len(user_profiles),
-
     "total_reviews": len(reviews),
-
     "reviews_without_aspects": sum(
         not review.get("aspects")
         for review in reviews
     ),
-
     "users_with_aspect_profiles": sum(
         profile["aspect_profile_count"] > 0
         for profile in user_profiles
     ),
-
     "total_aspect_evidence_records": len(aspect_rows),
-
-    "unique_review_aspect_groups": len(
-        review_aspect_records
-    ),
-
+    "unique_review_aspect_groups": len(review_aspect_records),
     "duplicate_review_aspect_groups": duplicate_groups,
-
-    "extra_evidence_rows_within_duplicate_groups": (
-        duplicate_extra_rows
-    ),
-
+    "extra_evidence_rows_within_duplicate_groups": (duplicate_extra_rows),
     "review_aspect_groups_with_valid_evidence": sum(
         row["review_aspect_sentiment_score"] is not None
         for row in review_aspect_records
     ),
-
     "review_aspect_groups_excluded_only": sum(
         row["review_aspect_sentiment_score"] is None
         for row in review_aspect_records
     ),
-
     "mixed_review_aspect_groups": mixed_groups,
-
-    "user_aspect_profile_count": len(
-        user_aspect_profiles
-    ),
-
+    "user_aspect_profile_count": len(user_aspect_profiles),
     "single_review_support_profiles": single_support,
-
     "multi_review_support_profiles": multi_support,
-
     "zero_valid_support_profiles": zero_support,
-
-    "profile_direction_counts": dict(
-        profile_direction_counts
-    ),
-
-    "review_aspect_polarity_counts": dict(
-        valid_review_aspect_counts
-    ),
-
-    "valid_evidence_sentiment_counts": dict(
-        valid_evidence_sentiments
-    ),
-
+    "profile_direction_counts": dict(profile_direction_counts),
+    "review_aspect_polarity_counts": dict(valid_review_aspect_counts),
+    "valid_evidence_sentiment_counts": dict(valid_evidence_sentiments),
     "scoring_method": {
-
         "positive": 1.0,
-
         "neutral": 0.0,
-
         "negative": -1.0,
-
         "review_aspect_score": (
             "Mean sentiment score across valid evidence "
             "within one review and one aspect."
         ),
-
         "user_preference_score": (
             "Mean review-aspect score across distinct reviews "
             "for the same user and aspect."
         ),
-
-        "preference_strength": (
-            "Absolute value of the user preference score."
-        ),
-
+        "preference_strength": ("Absolute value of the user preference score."),
         "evidence_policy": (
             "Only evidence_valid=True records contribute to "
             "primary scoring. Review-required evidence is retained "
             "but excluded from scoring."
         ),
-
         "duplicate_policy": (
             "Multiple evidence records for the same aspect within "
             "one review are aggregated before user-level scoring."
         ),
-
-        "taxonomy_policy": (
-            "Use profile_aspect. Unapproved aliases remain separate."
-        ),
-
+        "taxonomy_policy": ("Use profile_aspect. Unapproved aliases remain separate."),
         "rating_policy": (
             "Overall review ratings are retained as context and "
             "are not used as aspect-level sentiment scores."
         ),
-
         "temporal_policy": (
             "No recency weighting because review timestamps "
             "are not available in the prepared data."
         )
-
     }
-
 }
 
-
-# Save outputs
 
 print("\n[8] Saving files")
 
@@ -882,70 +688,45 @@ write_jsonl(
 csv_rows = []
 
 for row in user_aspect_profiles:
-
     csv_rows.append({
-
         "user_id": row["user_id"],
-
         "profile_aspect": row["profile_aspect"],
-
         "parent_category": row["parent_category"] or "",
-
         "support_review_count": row["support_review_count"],
-
         "excluded_only_review_count": row["excluded_only_review_count"],
-
         "valid_evidence_count": row["valid_evidence_count"],
-
         "excluded_evidence_count": row["excluded_evidence_count"],
-
         "positive_evidence_count": row["positive_evidence_count"],
-
         "neutral_evidence_count": row["neutral_evidence_count"],
-
         "negative_evidence_count": row["negative_evidence_count"],
-
         "positive_review_count": row["positive_review_count"],
-
         "neutral_review_count": row["neutral_review_count"],
-
         "negative_review_count": row["negative_review_count"],
-
         "mixed_review_count": row["mixed_review_count"],
-
         "preference_score": row["preference_score"],
-
         "preference_strength": row["preference_strength"],
-
         "preference_direction": row["preference_direction"],
-
         "has_conflicting_reviews": row["has_conflicting_reviews"],
-
         "mapping_statuses": json.dumps(
             row["mapping_statuses"],
             ensure_ascii=False
         ),
-
         "profile_mapping_statuses": json.dumps(
             row["profile_mapping_statuses"],
             ensure_ascii=False
         ),
-
         "source_review_ids": json.dumps(
             row["source_review_ids"],
             ensure_ascii=False
         ),
-
         "source_item_ids": json.dumps(
             row["source_item_ids"],
             ensure_ascii=False
         ),
-
         "evidence_examples": json.dumps(
             row["evidence_examples"],
             ensure_ascii=False
         )
-
     })
 
 
@@ -959,8 +740,6 @@ write_json(
     summary
 )
 
-
-# Final report
 
 print("\n" + "=" * 60)
 

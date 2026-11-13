@@ -1,52 +1,50 @@
-# Research implementation
+# Research pipeline
 
-This directory contains the historical review-processing and profile-building code used by the research prototype. The portable app is in `../src`. The two share the same research design; the small synthetic app dataset is provided for quick installation.
+The scripts in `src/` process reviews and build the profiles used for historical matching. The interactive app and four-strategy comparison are in the repository's top-level `src/` directory.
 
-## Original research data
+## Dataset
 
 | Quantity | Count |
 |---|---:|
 | Training reviews processed | 2,029 |
 | User records | 253 |
 | Users with in-scope aspect profiles | 250 |
-| Reviews contributing to the in-scope user-profile dataset | 1,792 |
+| Reviews in the in-scope user-profile dataset | 1,792 |
 | Item profiles before scope filtering | 341 |
-| In-scope products used for recommendation | 297 |
+| In-scope products | 297 |
 | Extracted attribute–sentiment–evidence records | 9,255 |
 
-The [research snapshot](examples/research_snapshot.json) contains selected real profile aggregates and three saved recommendation examples. The example user has six in-scope reviews and 23 attribute profiles. Its identity and review text are omitted. The snapshot records the sampling choice; it is an illustration, not an evaluation sample.
+The [output examples](examples/research_snapshot.json) contain profile aggregates and three recommendation cases for the first user in the research app. That user has six in-scope reviews and 23 attribute profiles. User identifiers and review text are omitted; up to six attributes are shown per profile.
 
-For that user, the moisturizer query recalls 38 unseen candidates and displays five recommendations. The sulfate-free shampoo query displays four recommendations with catalog support and five unverified candidates. A non-strict nail-polish priority comparison requests clarification. The selected intents are cached development outputs; ranking and retrieval were executed against the prepared research data.
+For this user, the moisturizer request recalls 38 unseen candidates and displays five recommendations. The sulfate-free shampoo request displays four recommendations with catalog support and five unverified candidates. A non-strict priority comparison requests clarification. Intent parsing uses saved development outputs; ranking and retrieval use the prepared research data. These selected examples illustrate the app and are separate from the evaluation sample.
 
-## Read the implementation
+## Processing stages
 
 | Stage | Source |
 |---|---|
-| Select training reviews and catalog metadata; align review records | [prepare_dataset.py](src/prepare_dataset.py), [align_reviews.py](src/align_reviews.py) |
-| Extract attributes, sentiment, and verbatim evidence with a local LLM | [aspect_extraction.py](src/aspect_extraction.py), [full_aspect_extraction.py](src/full_aspect_extraction.py) |
-| Check evidence and prepare audited extraction records | [audit_aspect_extraction.py](src/audit_aspect_extraction.py), [prepare_aspect_data.py](src/prepare_aspect_data.py) |
-| Apply approved label mappings and prepare profile inputs | [prepare_profile_data.py](src/prepare_profile_data.py) |
-| Aggregate review-level and user-level attributes | [build_user_profiles.py](src/build_user_profiles.py), [build_user_profiles_in_scope.py](src/build_user_profiles_in_scope.py) |
-| Aggregate item attribute performance | [build_item_profiles.py](src/build_item_profiles.py) |
-| Build historical attention-weighted item scores | [build_user_item_matching_in_scope.py](src/build_user_item_matching_in_scope.py) |
-| Validate audited product categories and scope | [product_category_mapping.py](src/product_category_mapping.py) |
+| Select and align training reviews and metadata | [prepare_dataset.py](src/prepare_dataset.py), [align_reviews.py](src/align_reviews.py) |
+| Extract attributes, sentiment, and verbatim evidence | [aspect_extraction.py](src/aspect_extraction.py), [full_aspect_extraction.py](src/full_aspect_extraction.py) |
+| Check evidence and assemble audited records | [audit_aspect_extraction.py](src/audit_aspect_extraction.py), [prepare_aspect_data.py](src/prepare_aspect_data.py) |
+| Join attribute labels to approved mappings | [prepare_profile_data.py](src/prepare_profile_data.py) |
+| Aggregate user attributes | [build_user_profiles.py](src/build_user_profiles.py), [build_user_profiles_in_scope.py](src/build_user_profiles_in_scope.py) |
+| Aggregate item performance | [build_item_profiles.py](src/build_item_profiles.py) |
+| Score items using historical attribute attention | [build_user_item_matching_in_scope.py](src/build_user_item_matching_in_scope.py) |
+| Validate product categories and scope | [product_category_mapping.py](src/product_category_mapping.py) |
 
-Section formatting has been tidied. [Source hashes and AST checks](source_manifest.json) record that the published Python statements and strings match the original scripts.
+[Source hashes](source_manifest.json) identify the original and published files. AST checks cover every Python statement and string.
 
-## Connection to the proposed research
+## Research scope
 
-The prototype investigates three linked problems: constructing user and item attribute representations, coordinating historical attention with explicit current requirements, and evaluating recommendation outcomes and explanations.
+The proposal concerns attribute representations, coordination between history and current requirements, and evaluation of recommendations and explanations. This implementation uses LLM extraction, statistical aggregation, fixed fusion weights, finite attribute rules, and catalog-based hard-constraint checks. Unapproved aliases remain separate, leaving systematic attribute alignment unresolved.
 
-The implemented representation uses LLM extraction and statistical aggregation. Unapproved attribute aliases remain separate, so systematic alignment is still an open problem. Coordination currently uses fixed weights, finite attribute rules, and explicit hard-constraint checks. BM25-based evidence selection is compared separately in the offline experiment. These implementations provide baselines for studying more general coordination mechanisms.
+The [offline comparison](../reports/offline_ranking_comparison.md) evaluates four strategies over 253 histories and 72 simulated development queries. Its primary subset has 4,299 artificial combinations. Independent query-item relevance and explanation-faithfulness evaluation remain future work.
 
-The [offline report](../reports/offline_ranking_comparison.md) compares four strategies over 253 histories and 72 simulated development queries. The primary subset has 4,299 artificial combinations. Internal support metrics share the scoring rules; independent query-item relevance and explanation-faithfulness evaluation remain future work.
+## Inputs and execution
 
-## Running and data access
+The scripts expect source inputs in `research/data/raw`, prepared files in `research/data/processed`, and extraction outputs in `research/outputs`. All three directories are ignored by Git. Each script defines its required filenames near the top. Approved taxonomy and category-mapping inputs are also required; the synthetic demo files do not replace them.
 
-The portable app can load the prepared research inputs through `RECOMMENDER_DATA_DIR`; see [reproduction instructions](../docs/REPRODUCIBILITY.md). The repository does not distribute the original review corpus or manual audit workbooks.
+Additional dependencies are listed in `research/requirements.txt`. Several scripts begin processing when executed, and full extraction calls Ollama. Their syntax and source equivalence have been checked; the full workflow has not been rerun from raw inputs for this release.
 
-The scripts here retain the original layout: `research/data/raw` for source inputs, `research/data/processed` for prepared files, and `research/outputs` for extraction and audit outputs. These directories are ignored by Git. Required filenames are defined near the beginning of each script. The historical workflow also depends on approved taxonomy and category-mapping files; those inputs are not replaced by the synthetic demo files.
+The app can load an existing prepared dataset through `RECOMMENDER_DATA_DIR`. See [reproduction instructions](../docs/REPRODUCIBILITY.md).
 
-`research/requirements.txt` lists the additional imports. This publication checks source equivalence and syntax; it has not rerun the full historical preprocessing pipeline from raw inputs. Some scripts write outputs at top level and full extraction calls Ollama, so inspect their input paths before executing them.
-
-The source is [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/). The maintainers discuss its usage and licensing in [this thread](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/discussions/1). The snapshot here publishes aggregates and selected score outputs, without redistributing review text.
+The data source is [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/). Its maintainers discuss usage and licensing [here](https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/discussions/1). This directory includes code, aggregates, and selected scores; original review text and manual audit workbooks are not distributed.

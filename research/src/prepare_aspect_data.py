@@ -6,24 +6,17 @@ import html
 import re
 
 
-# Project paths
-
 ROOT = Path(__file__).resolve().parents[1]
 
 OUTPUT_DIR = ROOT / "data" / "processed"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_FILE = (
-    OUTPUT_DIR / "aspect_extraction_audited.jsonl"
-)
+OUTPUT_FILE = OUTPUT_DIR / "aspect_extraction_audited.jsonl"
 
-SUMMARY_FILE = (
-    OUTPUT_DIR / "aspect_audit_summary.json"
-)
+SUMMARY_FILE = OUTPUT_DIR / "aspect_audit_summary.json"
 
 
 def find_input_file(filename, required=True):
-
     candidates = [
         ROOT / "outputs" / filename,
         ROOT / "data" / "processed" / filename,
@@ -32,12 +25,10 @@ def find_input_file(filename, required=True):
     ]
 
     for path in candidates:
-
         if path.exists():
             return path
 
     if required:
-
         raise FileNotFoundError(
             f"\nCannot find input file: {filename}\n"
             + "\n".join(str(p) for p in candidates)
@@ -46,17 +37,11 @@ def find_input_file(filename, required=True):
     return None
 
 
-RAW_FILE = find_input_file(
-    "aspect_extraction_full.jsonl"
-)
+RAW_FILE = find_input_file("aspect_extraction_full.jsonl")
 
-UNICODE_FILE = find_input_file(
-    "evidence_unicode_matches.jsonl"
-)
+UNICODE_FILE = find_input_file("evidence_unicode_matches.jsonl")
 
-REVIEW_FILE = find_input_file(
-    "evidence_review_required.jsonl"
-)
+REVIEW_FILE = find_input_file("evidence_review_required.jsonl")
 
 AUDIT_SUMMARY_FILE = find_input_file(
     "aspect_audit_summary.json",
@@ -67,24 +52,17 @@ AUDIT_SUMMARY_FILE = find_input_file(
 # JSON / JSONL utilities
 
 def load_records(path):
-
     records = []
 
     with open(path, "r", encoding="utf-8-sig") as f:
-
         for line_number, line in enumerate(f, start=1):
-
             if not line.strip():
                 continue
 
             try:
-
-                records.append(
-                    json.loads(line)
-                )
+                records.append(json.loads(line))
 
             except json.JSONDecodeError as e:
-
                 raise ValueError(
                     f"Invalid JSON:\n"
                     f"File: {path}\n"
@@ -96,15 +74,10 @@ def load_records(path):
 
 
 def write_jsonl(path, records):
-
-    temp_file = path.with_suffix(
-        path.suffix + ".tmp"
-    )
+    temp_file = path.with_suffix(path.suffix + ".tmp")
 
     with open(temp_file, "w", encoding="utf-8") as f:
-
         for record in records:
-
             f.write(
                 json.dumps(
                     record,
@@ -116,13 +89,9 @@ def write_jsonl(path, records):
 
 
 def write_json(path, data):
-
-    temp_file = path.with_suffix(
-        path.suffix + ".tmp"
-    )
+    temp_file = path.with_suffix(path.suffix + ".tmp")
 
     with open(temp_file, "w", encoding="utf-8") as f:
-
         json.dump(
             data,
             f,
@@ -136,20 +105,16 @@ def write_json(path, data):
 # Text normalization
 
 def normalize_basic(text):
-
     """
     Original validation:
     - Case-insensitive matching
     - Whitespace normalization
     """
 
-    return " ".join(
-        str(text).casefold().split()
-    )
+    return " ".join(str(text).casefold().split())
 
 
 def normalize_unicode(text):
-
     """
     Extended text normalization.
 
@@ -183,26 +148,21 @@ def normalize_unicode(text):
 
     # Normalize punctuation
     replacements = {
-
         "\u2018": "'",
         "\u2019": "'",
         "\u201B": "'",
         "\u02BC": "'",
         "\uFF07": "'",
-
         "\u201C": '"',
         "\u201D": '"',
         "\u201E": '"',
-
         "\u2010": "-",
         "\u2011": "-",
         "\u2012": "-",
         "\u2013": "-",
         "\u2014": "-",
         "\u2212": "-",
-
         "\u00A0": " ",
-
         "\u200B": "",
         "\u200C": "",
         "\u200D": "",
@@ -210,27 +170,21 @@ def normalize_unicode(text):
     }
 
     for old, new in replacements.items():
-
         text = text.replace(old, new)
 
     # Normalize whitespace
-    return " ".join(
-        text.casefold().split()
-    )
+    return " ".join(text.casefold().split())
 
 def normalize_label(text):
     """
     Normalize aspect labels for consistent matching.
     """
 
-    return " ".join(
-        str(text).strip().casefold().split()
-    )
+    return " ".join(str(text).strip().casefold().split())
 
 # Flexible audit record extraction
 
 def flatten_audit_records(records):
-
     """
     Support both audit structures:
 
@@ -258,14 +212,11 @@ def flatten_audit_records(records):
     flattened = []
 
     for record in records:
-
         if isinstance(
             record.get("aspects"),
             list
         ):
-
             for aspect in record["aspects"]:
-
                 merged = {
                     **record,
                     **aspect
@@ -277,7 +228,6 @@ def flatten_audit_records(records):
             record.get("aspect"),
             dict
         ):
-
             merged = {
                 **record,
                 **record["aspect"]
@@ -286,16 +236,13 @@ def flatten_audit_records(records):
             flattened.append(merged)
 
         else:
-
             flattened.append(record)
 
     return flattened
 
 
 def get_field(record, candidates):
-
     for field in candidates:
-
         value = record.get(field)
 
         if value is not None:
@@ -305,7 +252,6 @@ def get_field(record, candidates):
 
 
 def get_row_id(record):
-
     value = get_field(
         record,
         [
@@ -316,7 +262,6 @@ def get_row_id(record):
     )
 
     if value is None:
-
         raise ValueError(
             "Audit record missing train_row_id. "
             f"Available fields: {list(record.keys())}"
@@ -326,7 +271,6 @@ def get_row_id(record):
 
 
 def get_aspect_name(record):
-
     value = get_field(
         record,
         [
@@ -338,7 +282,6 @@ def get_aspect_name(record):
     )
 
     if value is None:
-
         raise ValueError(
             "Audit record missing aspect name. "
             f"Available fields: {list(record.keys())}"
@@ -348,7 +291,6 @@ def get_aspect_name(record):
 
 
 def get_evidence(record):
-
     value = get_field(
         record,
         [
@@ -367,20 +309,14 @@ def get_evidence(record):
 # Aspect matching keys
 
 def make_key(row_id, aspect, evidence):
-
     return (
-
         str(row_id),
-
         normalize_label(aspect),
-
         normalize_unicode(evidence)
-
     )
 
 
 def make_source_key(row_id, aspect):
-
     return make_key(
         row_id,
         aspect.get("aspect", ""),
@@ -389,11 +325,9 @@ def make_source_key(row_id, aspect):
 
 
 def build_audit_counter(records):
-
     counter = Counter()
 
     for record in records:
-
         row_id = get_row_id(record)
 
         aspect = get_aspect_name(record)
@@ -425,13 +359,9 @@ unicode_raw = load_records(UNICODE_FILE)
 
 review_raw = load_records(REVIEW_FILE)
 
-unicode_records = flatten_audit_records(
-    unicode_raw
-)
+unicode_records = flatten_audit_records(unicode_raw)
 
-review_records = flatten_audit_records(
-    review_raw
-)
+review_records = flatten_audit_records(review_raw)
 
 print("Original reviews:", len(raw_records))
 
@@ -453,31 +383,19 @@ print("\n[2] Checking source review IDs...")
 review_by_id = {}
 
 for record in raw_records:
-
     if "train_row_id" not in record:
+        raise ValueError("Original record missing train_row_id.")
 
-        raise ValueError(
-            "Original record missing train_row_id."
-        )
-
-    row_id = str(
-        record["train_row_id"]
-    )
+    row_id = str(record["train_row_id"])
 
     if row_id in review_by_id:
-
-        raise ValueError(
-            f"Duplicate train_row_id: {row_id}"
-        )
+        raise ValueError(f"Duplicate train_row_id: {row_id}")
 
     if record.get("status") not in (
         None,
         "success"
     ):
-
-        raise ValueError(
-            f"Unsuccessful extraction: {row_id}"
-        )
+        raise ValueError(f"Unsuccessful extraction: {row_id}")
 
     review_by_id[row_id] = record
 
@@ -486,24 +404,16 @@ for record in raw_records:
 
 print("\n[3] Building audit indexes...")
 
-unicode_counter = build_audit_counter(
-    unicode_records
-)
+unicode_counter = build_audit_counter(unicode_records)
 
-review_counter = build_audit_counter(
-    review_records
-)
+review_counter = build_audit_counter(review_records)
 
 source_counter = Counter()
 
 for record in raw_records:
-
-    row_id = str(
-        record["train_row_id"]
-    )
+    row_id = str(record["train_row_id"])
 
     for aspect in record.get("aspects", []):
-
         source_counter[
             make_source_key(row_id, aspect)
         ] += 1
@@ -517,10 +427,7 @@ overlap = (
 )
 
 if overlap:
-
-    raise ValueError(
-        f"Conflicting audit categories: {len(overlap)}"
-    )
+    raise ValueError(f"Conflicting audit categories: {len(overlap)}")
 
 
 # Validate audit records
@@ -529,16 +436,11 @@ print("\n[4] Validating audit records...")
 
 
 def validate_audit_records(records, label):
-
     for audit_record in records:
-
         row_id = get_row_id(audit_record)
 
         if row_id not in review_by_id:
-
-            raise ValueError(
-                f"{label}: Unknown train_row_id {row_id}"
-            )
+            raise ValueError(f"{label}: Unknown train_row_id {row_id}")
 
         original = review_by_id[row_id]
 
@@ -548,13 +450,8 @@ def validate_audit_records(records, label):
             "user_id",
             "parent_asin"
         ):
-
             if field in audit_record:
-
-                if str(audit_record[field]) != str(
-                    original.get(field)
-                ):
-
+                if str(audit_record[field]) != str(original.get(field)):
                     raise ValueError(
                         f"{label}: {field} mismatch "
                         f"for train_row_id {row_id}"
@@ -562,9 +459,7 @@ def validate_audit_records(records, label):
 
         # Check review text when supplied
 
-        audit_text = audit_record.get(
-            "review_text"
-        )
+        audit_text = audit_record.get("review_text")
 
         original_text = original.get(
             "review_text",
@@ -572,12 +467,10 @@ def validate_audit_records(records, label):
         )
 
         if audit_text is not None:
-
             if (
                 normalize_unicode(audit_text)
                 != normalize_unicode(original_text)
             ):
-
                 raise ValueError(
                     f"{label}: Review text mismatch "
                     f"for train_row_id {row_id}"
@@ -585,48 +478,35 @@ def validate_audit_records(records, label):
 
         # Check evidence
 
-        evidence = get_evidence(
-            audit_record
-        )
+        evidence = get_evidence(audit_record)
 
         if not evidence:
-
             raise ValueError(
                 f"{label}: Empty evidence "
                 f"for train_row_id {row_id}"
             )
 
-        normalized_evidence = normalize_unicode(
-            evidence
-        )
+        normalized_evidence = normalize_unicode(evidence)
 
-        normalized_review = normalize_unicode(
-            original_text
-        )
+        normalized_review = normalize_unicode(original_text)
 
         if label == "Unicode":
-
             if normalized_evidence not in normalized_review:
-
                 raise ValueError(
                     f"Unicode evidence failed validation: "
                     f"{row_id}"
                 )
 
         elif label == "Manual review":
-
             if normalized_evidence in normalized_review:
-
                 raise ValueError(
                     f"Manual review evidence unexpectedly "
                     f"matches after normalization: {row_id}"
                 )
 
-    print(
-        f"{label} audit validation: PASSED"
-    )
+    print(f"{label} audit validation: PASSED")
 
-# DEBUG: Inspect Unicode record 695
+# Inspect a Unicode-normalization example.
 
 target_id = "695"
 
@@ -635,26 +515,18 @@ print("\n[DEBUG] Inspecting train_row_id:", target_id)
 found = False
 
 for audit_record in unicode_records:
-
     if get_row_id(audit_record) == target_id:
-
         found = True
 
         original = review_by_id[target_id]
 
         evidence = get_evidence(audit_record)
 
-        original_text = str(
-            original.get("review_text", "")
-        )
+        original_text = str(original.get("review_text", ""))
 
-        normalized_evidence = normalize_unicode(
-            evidence
-        )
+        normalized_evidence = normalize_unicode(evidence)
 
-        normalized_review = normalize_unicode(
-            original_text
-        )
+        normalized_review = normalize_unicode(original_text)
 
         print("\n--- Audit Record ---")
 
@@ -690,7 +562,7 @@ for audit_record in unicode_records:
 if not found:
     print("Record 695 not found in Unicode audit records.")
 
-# END DEBUG
+
 validate_audit_records(
     unicode_records,
     "Unicode"
@@ -708,11 +580,8 @@ for label, counter in (
     ("Unicode", unicode_counter),
     ("Manual review", review_counter)
 ):
-
     for key, count in counter.items():
-
         if count > source_counter[key]:
-
             raise ValueError(
                 f"{label} record does not match "
                 f"original extraction:\n{key}"
@@ -746,7 +615,6 @@ processed_records = []
 
 
 def parse_bool(value):
-
     if isinstance(value, bool):
         return value
 
@@ -754,7 +622,6 @@ def parse_bool(value):
         return bool(value)
 
     if isinstance(value, str):
-
         return value.strip().casefold() in (
             "true",
             "1",
@@ -765,33 +632,20 @@ def parse_bool(value):
 
 
 for record in raw_records:
+    row_id = str(record["train_row_id"])
 
-    row_id = str(
-        record["train_row_id"]
-    )
-
-    review_text = str(
-        record.get("review_text", "")
-    )
+    review_text = str(record.get("review_text", ""))
 
     if not review_text.strip():
+        raise ValueError(f"Empty review text: {row_id}")
 
-        raise ValueError(
-            f"Empty review text: {row_id}"
-        )
+    basic_review = normalize_basic(review_text)
 
-    basic_review = normalize_basic(
-        review_text
-    )
-
-    unicode_review = normalize_unicode(
-        review_text
-    )
+    unicode_review = normalize_unicode(review_text)
 
     updated_aspects = []
 
     for aspect in record.get("aspects", []):
-
         item = dict(aspect)
 
         aspect_name = item.get(
@@ -799,9 +653,7 @@ for record in raw_records:
             ""
         )
 
-        evidence = str(
-            item.get("evidence", "")
-        )
+        evidence = str(item.get("evidence", ""))
 
         key = make_key(
             row_id,
@@ -809,13 +661,9 @@ for record in raw_records:
             evidence
         )
 
-        basic_evidence = normalize_basic(
-            evidence
-        )
+        basic_evidence = normalize_basic(evidence)
 
-        unicode_evidence = normalize_unicode(
-            evidence
-        )
+        unicode_evidence = normalize_unicode(evidence)
 
         # Original validation
 
@@ -833,25 +681,19 @@ for record in raw_records:
 
         # Check original evidence_valid flag
 
-        old_flag = parse_bool(
-            item.get("evidence_valid")
-        )
+        old_flag = parse_bool(item.get("evidence_valid"))
 
         if old_flag is not None:
-
             if old_flag != basic_match:
-
                 original_flag_mismatches += 1
 
         # Classification 1: Original valid
 
         if basic_match:
-
             if (
                 unicode_remaining[key] > 0
                 or review_remaining[key] > 0
             ):
-
                 raise ValueError(
                     f"Audit category conflicts with "
                     f"original validation: {key}"
@@ -859,9 +701,7 @@ for record in raw_records:
 
             item["evidence_valid"] = True
 
-            item["evidence_match_type"] = (
-                "casefold_whitespace"
-            )
+            item["evidence_match_type"] = ("casefold_whitespace")
 
             item["evidence_review_required"] = False
 
@@ -870,20 +710,14 @@ for record in raw_records:
         # Classification 2: Unicode recovered
 
         elif unicode_remaining[key] > 0:
-
             if not unicode_match:
-
-                raise ValueError(
-                    f"Unicode audit match failed: {key}"
-                )
+                raise ValueError(f"Unicode audit match failed: {key}")
 
             unicode_remaining[key] -= 1
 
             item["evidence_valid"] = True
 
-            item["evidence_match_type"] = (
-                "unicode_normalized"
-            )
+            item["evidence_match_type"] = ("unicode_normalized")
 
             item["evidence_review_required"] = False
 
@@ -892,9 +726,7 @@ for record in raw_records:
         # Classification 3: Needs manual review
 
         elif review_remaining[key] > 0:
-
             if unicode_match:
-
                 raise ValueError(
                     f"Manual review classification "
                     f"conflicts with Unicode matching: {key}"
@@ -904,9 +736,7 @@ for record in raw_records:
 
             item["evidence_valid"] = False
 
-            item["evidence_match_type"] = (
-                "needs_review"
-            )
+            item["evidence_match_type"] = ("needs_review")
 
             item["evidence_review_required"] = True
 
@@ -915,12 +745,9 @@ for record in raw_records:
         # Classification 4: Unlisted Unicode match
 
         elif unicode_match:
-
             item["evidence_valid"] = True
 
-            item["evidence_match_type"] = (
-                "unicode_normalized_unlisted"
-            )
+            item["evidence_match_type"] = ("unicode_normalized_unlisted")
 
             item["evidence_review_required"] = False
 
@@ -931,12 +758,9 @@ for record in raw_records:
         # Classification 5: Unmatched evidence
 
         else:
-
             item["evidence_valid"] = False
 
-            item["evidence_match_type"] = (
-                "needs_review_unlisted"
-            )
+            item["evidence_match_type"] = ("needs_review_unlisted")
 
             item["evidence_review_required"] = True
 
@@ -950,9 +774,7 @@ for record in raw_records:
 
     record["aspects"] = updated_aspects
 
-    record["evidence_total"] = len(
-        updated_aspects
-    )
+    record["evidence_total"] = len(updated_aspects)
 
     record["evidence_valid_count"] = sum(
         item["evidence_valid"]
@@ -972,30 +794,23 @@ for record in raw_records:
 print("\n[6] Checking audit record consistency...")
 
 
-remaining_unicode = sum(
-    unicode_remaining.values()
-)
+remaining_unicode = sum(unicode_remaining.values())
 
-remaining_review = sum(
-    review_remaining.values()
-)
+remaining_review = sum(review_remaining.values())
 
 if remaining_unicode > 0:
-
     raise ValueError(
         f"{remaining_unicode} Unicode audit records "
         f"were not matched to original aspects."
     )
 
 if remaining_review > 0:
-
     raise ValueError(
         f"{remaining_review} manual review records "
         f"were not matched to original aspects."
     )
 
 if original_flag_mismatches > 0:
-
     raise ValueError(
         f"Original evidence_valid flag mismatches: "
         f"{original_flag_mismatches}"
@@ -1009,9 +824,7 @@ print("Audit record matching: PASSED")
 print("\n[7] Calculating final statistics...")
 
 
-total_reviews = len(
-    processed_records
-)
+total_reviews = len(processed_records)
 
 total_evidence = sum(
     len(record.get("aspects", []))
@@ -1044,9 +857,7 @@ unique_aspect_labels = len({
     for aspect in record.get("aspects", [])
 })
 
-total_valid = (
-    basic_valid + unicode_valid
-)
+total_valid = basic_valid + unicode_valid
 
 validity_rate = (
     total_valid / total_evidence
@@ -1056,38 +867,23 @@ validity_rate = (
 
 
 summary = {
-
     "total_reviews": total_reviews,
-
     "unique_train_row_ids": unique_row_ids,
-
     "unique_users": unique_users,
-
     "unique_items": unique_items,
-
     "empty_aspect_reviews": empty_aspect_reviews,
-
     "total_aspect_evidence_pairs": total_evidence,
-
     "unique_aspect_labels": unique_aspect_labels,
-
     "original_valid_evidence": basic_valid,
-
     "unicode_normalization_recovered": unicode_valid,
-
     "normalized_valid_evidence": total_valid,
-
     "evidence_requiring_review": needs_review,
-
     "normalized_match_rate": round(
         validity_rate,
         4
     ),
-
     "unlisted_unicode_matches": unlisted_unicode,
-
     "unlisted_unmatched_evidence": unlisted_unmatched,
-
     "original_flag_mismatches": original_flag_mismatches
 }
 
@@ -1098,62 +894,41 @@ print("\n[8] Comparing previous audit summary...")
 
 
 if AUDIT_SUMMARY_FILE is not None:
-
     with open(
         AUDIT_SUMMARY_FILE,
         "r",
         encoding="utf-8"
     ) as f:
-
         expected = json.load(f)
 
     fields_to_check = [
-
         "total_reviews",
-
         "unique_train_row_ids",
-
         "unique_users",
-
         "unique_items",
-
         "empty_aspect_reviews",
-
         "total_aspect_evidence_pairs",
-
         "unique_aspect_labels",
-
         "original_valid_evidence",
-
         "unicode_normalization_recovered",
-
         "normalized_valid_evidence",
-
         "evidence_requiring_review",
-
         "normalized_match_rate"
-
     ]
 
     mismatches = {}
 
     for field in fields_to_check:
-
         if field not in expected:
             continue
 
         if summary[field] != expected[field]:
-
             mismatches[field] = {
-
                 "expected": expected[field],
-
                 "actual": summary[field]
-
             }
 
     if mismatches:
-
         print(
             json.dumps(
                 mismatches,
@@ -1171,7 +946,6 @@ if AUDIT_SUMMARY_FILE is not None:
     print("Previous audit summary: PASSED")
 
 else:
-
     print(
         "Previous audit summary not found. "
         "Historical comparison skipped."
@@ -1183,23 +957,14 @@ else:
 print("\n[9] Running final integrity checks...")
 
 
-assert total_reviews == unique_row_ids, (
-    "Review count and unique row ID count mismatch."
-)
+assert total_reviews == unique_row_ids, ("Review count and unique row ID count mismatch.")
 
-assert total_evidence == (
-    basic_valid + unicode_valid + needs_review
-), "Evidence count mismatch."
+assert total_evidence == (basic_valid + unicode_valid + needs_review), "Evidence count mismatch."
 
-assert len(processed_records) == len(raw_records), (
-    "Some original reviews were lost."
-)
+assert len(processed_records) == len(raw_records), ("Some original reviews were lost.")
 
 for record in processed_records:
-
-    assert len(record["aspects"]) == (
-        record["evidence_total"]
-    )
+    assert len(record["aspects"]) == (record["evidence_total"])
 
     assert record["evidence_valid_count"] + (
         record["evidence_review_required_count"]
@@ -1228,8 +993,6 @@ write_json(
     summary
 )
 
-
-# Final report
 
 print("\n" + "=" * 60)
 

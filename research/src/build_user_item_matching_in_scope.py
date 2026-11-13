@@ -6,54 +6,35 @@ import math
 import statistics
 
 
-# Configuration
-
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "processed"
 
-# Input files
 
 # Keep the complete training history for interaction validation
 # and previously reviewed item exclusion.
 
 REVIEW_FILE = DATA_DIR / "profile_data.jsonl"
 
-# Use the newly constructed In-Scope user profiles.
+# In-scope user profiles.
 
-USER_FILE = (
-    DATA_DIR / "user_profile_aspect_scores_in_scope.csv"
-)
+USER_FILE = DATA_DIR / "user_profile_aspect_scores_in_scope.csv"
 
-# Keep the complete 341-item profile dataset.
-# Candidate filtering will be handled separately.
+# Keep all item profiles for validation.
 
-ITEM_FILE = (
-    DATA_DIR / "item_profile_aspect_scores.csv"
-)
+
+ITEM_FILE = DATA_DIR / "item_profile_aspect_scores.csv"
 
 # V2.1 product category and scope mapping.
 
-PRODUCT_MAPPING_FILE = (
-    DATA_DIR / "product_category_mapping_v2_1_audit_merged_341.csv"
-)
+PRODUCT_MAPPING_FILE = DATA_DIR / "product_category_mapping_v2_1_audit_merged_341.csv"
 
 
-# Independent output files
+PAIR_OUTPUT = DATA_DIR / "user_item_matching_scores_in_scope.csv"
 
-PAIR_OUTPUT = (
-    DATA_DIR / "user_item_matching_scores_in_scope.csv"
-)
+RECOMMENDATION_OUTPUT = DATA_DIR / "user_item_recommendations_in_scope.jsonl"
 
-RECOMMENDATION_OUTPUT = (
-    DATA_DIR / "user_item_recommendations_in_scope.jsonl"
-)
+SUMMARY_OUTPUT = DATA_DIR / "user_item_matching_summary_in_scope.json"
 
-SUMMARY_OUTPUT = (
-    DATA_DIR / "user_item_matching_summary_in_scope.json"
-)
-
-
-# Matching parameters
 
 MIN_SHARED_ASPECTS = 2
 TOP_K = 10
@@ -67,8 +48,6 @@ EXPECTED_ITEMS = 341
 EXPECTED_TRAIN_REVIEWS = 2029
 EXPECTED_IN_SCOPE_ITEMS = 297
 
-
-# Utility functions
 
 def load_jsonl(path):
     rows = []
@@ -138,13 +117,11 @@ def rounded(value, digits=6):
     return round(value, digits) if value is not None else None
 
 
-# Load files and training interactions
-
 print("\n" + "=" * 64)
 print("IN-SCOPE USER-ITEM MATCHING")
 print("=" * 64)
 
-# 1 Check required files
+# Check required files
 
 for path in (
     REVIEW_FILE,
@@ -153,12 +130,10 @@ for path in (
     PRODUCT_MAPPING_FILE
 ):
     if not path.exists():
-        raise FileNotFoundError(
-            f"Required file not found: {path}"
-        )
+        raise FileNotFoundError(f"Required file not found: {path}")
 
 
-# 2 Load source files
+# Load source files
 
 reviews = load_jsonl(REVIEW_FILE)
 user_rows = read_csv(USER_FILE)
@@ -172,7 +147,7 @@ print("Item-aspect rows:", len(item_rows))
 print("Product mapping rows:", len(mapping_rows))
 
 
-# 3 Validate training review count
+# Validate training review count
 
 if len(reviews) != EXPECTED_TRAIN_REVIEWS:
     raise ValueError(
@@ -181,12 +156,11 @@ if len(reviews) != EXPECTED_TRAIN_REVIEWS:
     )
 
 
-# 4 Build product metadata mapping
+# Build product metadata mapping
 
 product_mapping = {}
 
 for row in mapping_rows:
-
     iid = row["parent_asin"].strip()
     scope = row["final_scope_status"].strip()
 
@@ -194,9 +168,7 @@ for row in mapping_rows:
         raise ValueError("Empty parent_asin in product mapping.")
 
     if iid in product_mapping:
-        raise ValueError(
-            f"Duplicate product mapping ASIN: {iid}"
-        )
+        raise ValueError(f"Duplicate product mapping ASIN: {iid}")
 
     if scope not in {
         "in_scope",
@@ -204,9 +176,7 @@ for row in mapping_rows:
         "out_of_scope",
         "needs_review"
     }:
-        raise ValueError(
-            f"Invalid scope status for {iid}: {scope}"
-        )
+        raise ValueError(f"Invalid scope status for {iid}: {scope}")
 
     product_mapping[iid] = row
 
@@ -218,7 +188,7 @@ if len(product_mapping) != EXPECTED_ITEMS:
     )
 
 
-# 5 Validate product scope distribution
+# Validate product scope distribution
 
 expected_scope_counts = {
     "in_scope": 297,
@@ -242,14 +212,13 @@ if actual_scope_counts != expected_scope_counts:
     )
 
 
-# 6 Build complete training interaction history
+# Build complete training interaction history
 
 user_history = defaultdict(set)
 item_ratings = defaultdict(list)
 review_ids = set()
 
 for row in reviews:
-
     rid = row.get("train_row_id")
     uid = row.get("user_id")
     iid = row.get("parent_asin")
@@ -261,9 +230,7 @@ for row in reviews:
         )
 
     if rid in review_ids:
-        raise ValueError(
-            f"Duplicate train_row_id: {rid}"
-        )
+        raise ValueError(f"Duplicate train_row_id: {rid}")
 
     review_ids.add(rid)
 
@@ -279,11 +246,9 @@ for row in reviews:
         item_ratings[iid].append(rating)
 
 
-# 7 Separate complete users and item sets
+# Separate complete users and item sets
 
-history_pairs = sum(
-    len(x) for x in user_history.values()
-)
+history_pairs = sum(len(x) for x in user_history.values())
 
 # All 253 users come from complete training history.
 users = sorted(user_history.keys())
@@ -320,48 +285,23 @@ candidate_item_set = set(candidate_items)
 candidate_metadata = {}
 
 for iid in candidate_items:
-
     row = product_mapping[iid]
 
     metadata = {
-        "product_category": (
-            row.get("final_product_category") or ""
-        ).strip(),
-
-        "product_type": (
-            row.get("final_product_type") or ""
-        ).strip(),
-
-        "scope_status": (
-            row.get("final_scope_status") or ""
-        ).strip(),
-
-        "audit_status": (
-            row.get("audit_status") or ""
-        ).strip(),
-
-        "mapping_resolution": (
-            row.get("final_mapping_resolution") or ""
-        ).strip(),
-
-        "audit_id": (
-            row.get("audit_id") or ""
-        ).strip(),
-
-        "audit_decision": (
-            row.get("audit_decision") or ""
-        ).strip()
+        "product_category": (row.get("final_product_category") or "").strip(),
+        "product_type": (row.get("final_product_type") or "").strip(),
+        "scope_status": (row.get("final_scope_status") or "").strip(),
+        "audit_status": (row.get("audit_status") or "").strip(),
+        "mapping_resolution": (row.get("final_mapping_resolution") or "").strip(),
+        "audit_id": (row.get("audit_id") or "").strip(),
+        "audit_decision": (row.get("audit_decision") or "").strip()
     }
 
     if metadata["scope_status"] != "in_scope":
-        raise ValueError(
-            f"Non-In-Scope item in candidate metadata: {iid}"
-        )
+        raise ValueError(f"Non-In-Scope item in candidate metadata: {iid}")
 
     if not metadata["product_category"]:
-        raise ValueError(
-            f"Missing product category for In-Scope item: {iid}"
-        )
+        raise ValueError(f"Missing product category for In-Scope item: {iid}")
 
     candidate_metadata[iid] = metadata
 
@@ -375,17 +315,13 @@ if len(candidate_metadata) != EXPECTED_IN_SCOPE_ITEMS:
 print("Candidate product metadata validation: PASSED")
 
 
-# 8 Validate complete dataset coverage
+# Validate complete dataset coverage
 
 if len(users) != EXPECTED_USERS:
-    raise ValueError(
-        f"Expected {EXPECTED_USERS} users, got {len(users)}."
-    )
+    raise ValueError(f"Expected {EXPECTED_USERS} users, got {len(users)}.")
 
 if len(all_items) != EXPECTED_ITEMS:
-    raise ValueError(
-        f"Expected {EXPECTED_ITEMS} items, got {len(all_items)}."
-    )
+    raise ValueError(f"Expected {EXPECTED_ITEMS} items, got {len(all_items)}.")
 
 if len(candidate_items) != EXPECTED_IN_SCOPE_ITEMS:
     raise ValueError(
@@ -394,24 +330,16 @@ if len(candidate_items) != EXPECTED_IN_SCOPE_ITEMS:
     )
 
 if set(product_mapping) != set(all_items):
-    raise ValueError(
-        "Product mapping ASINs do not match Item Profile ASINs."
-    )
+    raise ValueError("Product mapping ASINs do not match Item Profile ASINs.")
 
 if history_items != set(all_items):
-    raise ValueError(
-        "Training-history items do not match Item Profile items."
-    )
+    raise ValueError("Training-history items do not match Item Profile items.")
 
 if not profile_users.issubset(set(users)):
-    raise ValueError(
-        "User profile contains users absent from training history."
-    )
+    raise ValueError("User profile contains users absent from training history.")
 
 if not candidate_item_set.issubset(set(all_items)):
-    raise ValueError(
-        "In-Scope candidates contain unknown items."
-    )
+    raise ValueError("In-Scope candidates contain unknown items.")
 
 
 # Only In-Scope products are eligible for recommendation.
@@ -428,7 +356,7 @@ if len(items) != EXPECTED_IN_SCOPE_ITEMS:
     )
 
 
-# 9 Print validation results
+# Print validation results
 
 print("\n[2] Interaction history")
 
@@ -524,16 +452,12 @@ aspect_n = defaultdict(int)
 # Calculate aspect priors using In-Scope items only.
 
 for iid in candidate_items:
-
     aspects = item_aspects.get(iid, {})
 
     for aspect, row in aspects.items():
-
         n = row["support_review_count"]
 
-        aspect_sum[aspect] += (
-            row["performance_score"] * n
-        )
+        aspect_sum[aspect] += (row["performance_score"] * n)
 
         aspect_n[aspect] += n
 
@@ -586,7 +510,7 @@ for uid in users:
             i = i_map[aspect]
 
             # Review frequency is an aspect-attention proxy.
-            # User historical sentiment sign is NOT treated as explicit taste.
+            # Historical sentiment records satisfaction, not a desired attribute value.
             weight = math.log1p(u["support_review_count"])
             adjusted, prior = smooth_item_score(iid, aspect, i)
 
@@ -698,27 +622,21 @@ for uid in users:
             "product_category": candidate_metadata[
                 row["parent_asin"]
             ]["product_category"],
-
             "product_type": candidate_metadata[
                 row["parent_asin"]
             ]["product_type"],
-
             "scope_status": candidate_metadata[
                 row["parent_asin"]
             ]["scope_status"],
-
             "audit_status": candidate_metadata[
                 row["parent_asin"]
             ]["audit_status"],
-
             "mapping_resolution": candidate_metadata[
                 row["parent_asin"]
             ]["mapping_resolution"],
-
             "audit_id": candidate_metadata[
                 row["parent_asin"]
             ]["audit_id"],
-
             "audit_decision": candidate_metadata[
                 row["parent_asin"]
             ]["audit_decision"],
@@ -755,27 +673,21 @@ for row in selected:
     "product_category": candidate_metadata[
         row["parent_asin"]
     ]["product_category"],
-
     "product_type": candidate_metadata[
         row["parent_asin"]
     ]["product_type"],
-
     "scope_status": candidate_metadata[
         row["parent_asin"]
     ]["scope_status"],
-
     "audit_status": candidate_metadata[
         row["parent_asin"]
     ]["audit_status"],
-
     "mapping_resolution": candidate_metadata[
         row["parent_asin"]
     ]["mapping_resolution"],
-
     "audit_id": candidate_metadata[
         row["parent_asin"]
     ]["audit_id"],
-
     "audit_decision": candidate_metadata[
         row["parent_asin"]
     ]["audit_decision"],
@@ -795,30 +707,21 @@ pair_keys = [(x["user_id"], x["parent_asin"]) for x in selected]
 # the approved In-Scope product mapping.
 
 for row in selected:
-
     iid = row["parent_asin"]
 
     if iid not in candidate_item_set:
-        raise ValueError(
-            f"Non-In-Scope product in recommendation: {iid}"
-        )
+        raise ValueError(f"Non-In-Scope product in recommendation: {iid}")
 
     metadata = candidate_metadata.get(iid)
 
     if metadata is None:
-        raise ValueError(
-            f"Missing product metadata: {iid}"
-        )
+        raise ValueError(f"Missing product metadata: {iid}")
 
     if metadata["scope_status"] != "in_scope":
-        raise ValueError(
-            f"Invalid recommendation scope: {iid}"
-        )
+        raise ValueError(f"Invalid recommendation scope: {iid}")
 
     if not metadata["product_category"]:
-        raise ValueError(
-            f"Missing product category: {iid}"
-        )
+        raise ValueError(f"Missing product category: {iid}")
 
 print("Recommendation product metadata validation: PASSED")
 if len(pair_keys) != len(set(pair_keys)):
@@ -838,7 +741,6 @@ counts = list(candidate_counts.values())
 
 summary = {
     "total_users": len(users),
-
     # Complete product inventory and eligible candidates.
     "total_items": len(all_items),
     "candidate_items": len(candidate_items),
@@ -877,13 +779,8 @@ summary = {
         "mean": round(statistics.mean(score_values), 6) if score_values else None,
         "median": round(statistics.median(score_values), 6) if score_values else None
     },
-    "users_with_valid_aspect_profiles": sum(
-    bool(user_aspects.get(uid)) for uid in users
-        ),
-
-    "users_without_valid_aspect_profiles": sum(
-    not user_aspects.get(uid) for uid in users
-        ),
+    "users_with_valid_aspect_profiles": sum(bool(user_aspects.get(uid)) for uid in users),
+    "users_without_valid_aspect_profiles": sum(not user_aspects.get(uid) for uid in users),
     "scoring_method": {
         "user_aspect_weight": "log(1 + distinct valid historical review count)",
         "user_sentiment_policy": (
@@ -896,9 +793,7 @@ summary = {
             "/ (n + lambda)"
         ),
         "shrinkage_lambda": SHRINKAGE_STRENGTH,
-        "pair_score": (
-            "Weighted mean of smoothed item aspect quality over shared valid aspects."
-        ),
+        "pair_score": ("Weighted mean of smoothed item aspect quality over shared valid aspects."),
         "coverage": "User and item aspect coverage ratios are reported separately.",
         "history_exclusion": (
             "Items already reviewed by the user in profile_data.jsonl are excluded."

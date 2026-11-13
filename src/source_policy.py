@@ -82,8 +82,7 @@ def comparisons(query):
             m = re.fullmatch(pattern, clause, re.I)
             if m:
                 high, low = m['high'].strip(), m['low'].strip()
-                # A list of endpoints or nested comparator needs a richer
-                # parser; do not pretend this single-endpoint grammar covers it.
+                # Lists and nested comparisons need a richer parser.
                 if re.search(r'\b(?:and|or|than|ranks|matters)\b', high+' '+low, re.I):
                     break
                 strict.append({'expression':clause,'higher':high,'lower':low})
@@ -120,7 +119,7 @@ def counting_entities(query):
 
 
 def build_contract(draft, item):
-    """Declared source/draft transforms, followed by the existing typed renderer."""
+    """Build the correction contract and record changes to the draft."""
     q = item['query']
     Draft202012Validator(frozen.SCHEMA).validate(draft)
     if draft['source']['original_text'] != q or draft['intent_id'] != item['intent_id']:
@@ -133,8 +132,8 @@ def build_contract(draft, item):
         if before != after:
             changes.append({'path':path,'rule':rule,'before':copy.deepcopy(before),'after':copy.deepcopy(after)})
 
-    # Product noun boundaries can be narrowed only when the normalized noun is
-    # literally the suffix and its entire prefix is a declared separable word.
+    # Split a product modifier only when the normalized noun matches the suffix
+    # and every prefix word is in the separable-modifier list.
     product = d['task']['product_type']
     raw = product['raw_text'] or ''
     noun = (product['normalized_value'] or '').replace('_',' ')
@@ -201,7 +200,7 @@ def build_contract(draft, item):
     for w in weak:
         d['unresolved_requirements'].append({'raw_expression':w['expression'],
             'reason':w['reason'],'possible_interpretations':[],'evidence':q})
-    # Deduplicate only identical source/reason signals, never distinct meanings.
+    # Deduplicate on both source text and reason.
     unique = {}
     for u in d['unresolved_requirements']:
         unique[(u['raw_expression'],u['reason'])] = u

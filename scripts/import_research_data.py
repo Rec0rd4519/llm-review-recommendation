@@ -1,4 +1,4 @@
-"""Import locally owned prepared research files; nothing is downloaded or published."""
+"""Copy prepared research inputs into the local data directory."""
 from pathlib import Path
 import argparse, shutil
 ROOT=Path(__file__).resolve().parents[1]

@@ -2,7 +2,6 @@ from pathlib import Path
 import pandas as pd
 import json
 
-# Project paths
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,20 +13,12 @@ train_file = (
     "last_out_w_his" / "All_Beauty.train.csv"
 )
 
-review_file = (
-    PROCESSED / "train_interaction_reviews.jsonl"
-)
+review_file = PROCESSED / "train_interaction_reviews.jsonl"
 
-output_file = (
-    PROCESSED / "train_aligned_reviews.jsonl"
-)
+output_file = PROCESSED / "train_aligned_reviews.jsonl"
 
-summary_file = (
-    PROCESSED / "alignment_summary.json"
-)
+summary_file = PROCESSED / "alignment_summary.json"
 
-
-# Load data
 
 print("[1] Loading data...")
 
@@ -47,9 +38,7 @@ print("Review records:", len(reviews))
 print("\n[2] Normalizing fields...")
 
 for df in [train, reviews]:
-
     for col in ["user_id", "parent_asin"]:
-
         df[col] = (
             df[col]
             .astype("string")
@@ -62,13 +51,9 @@ for df in [train, reviews]:
     )
 
 # Preserve original timestamps
-train = train.rename(
-    columns={"timestamp": "train_timestamp_raw"}
-)
+train = train.rename(columns={"timestamp": "train_timestamp_raw"})
 
-reviews = reviews.rename(
-    columns={"timestamp": "review_timestamp_raw"}
-)
+reviews = reviews.rename(columns={"timestamp": "review_timestamp_raw"})
 
 train["timestamp_key"] = pd.to_numeric(
     train["train_timestamp_raw"],
@@ -100,9 +85,7 @@ identity_cols = [
 
 before = len(reviews)
 
-reviews = reviews.drop_duplicates(
-    subset=identity_cols
-).copy()
+reviews = reviews.drop_duplicates(subset=identity_cols).copy()
 
 print("Before:", before)
 print("After:", len(reviews))
@@ -124,16 +107,10 @@ keys = [
 
 # Check uniqueness before merging
 if train.duplicated(keys).any():
-
-    raise ValueError(
-        "Duplicate matching keys found in Train."
-    )
+    raise ValueError("Duplicate matching keys found in Train.")
 
 if reviews.duplicated(keys).any():
-
-    raise ValueError(
-        "Ambiguous review matching keys found."
-    )
+    raise ValueError("Ambiguous review matching keys found.")
 
 
 # Exact one-to-one alignment
@@ -165,7 +142,6 @@ print("Unmatched rows:", len(unmatched))
 # Validate alignment
 
 if len(matched) != len(train):
-
     print("\nERROR: Not all rows matched.")
 
     print(
@@ -174,30 +150,20 @@ if len(matched) != len(train):
         ].head(10)
     )
 
-    raise ValueError(
-        "Alignment validation failed."
-    )
+    raise ValueError("Alignment validation failed.")
 
 if matched["train_row_id"].duplicated().any():
-
-    raise ValueError(
-        "Duplicate train_row_id detected."
-    )
+    raise ValueError("Duplicate train_row_id detected.")
 
 if len(matched) != 2029:
-
-    raise ValueError(
-        f"Expected 2029 matches, got {len(matched)}."
-    )
+    raise ValueError(f"Expected 2029 matches, got {len(matched)}.")
 
 
 # Save aligned dataset
 
 print("\n[5] Saving results...")
 
-matched = matched.drop(
-    columns=["_merge"]
-)
+matched = matched.drop(columns=["_merge"])
 
 matched.to_json(
     output_file,
@@ -211,16 +177,13 @@ summary = {
     "train_records": len(train),
     "matched_records": len(matched),
     "unmatched_records": len(unmatched),
-    "unique_train_row_ids": int(
-        matched["train_row_id"].nunique()
-    ),
+    "unique_train_row_ids": int(matched["train_row_id"].nunique()),
     "matching_keys": keys,
     "timestamp_conversion": "review_timestamp * 0.001",
     "validation": "passed"
 }
 
 with open(summary_file, "w", encoding="utf-8") as f:
-
     json.dump(
         summary,
         f,

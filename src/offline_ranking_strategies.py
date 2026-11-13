@@ -67,7 +67,7 @@ class ExperimentFeatures:
         for i,d in enumerate(self.index.documents):
             self.item_docs[d['parent_asin']].append(i)
         self.baseline={}
-        # Read the precomputed history baseline once, not once per query/user.
+        # Load history scores once for all combinations.
         import csv
         from prototype_engine import DATA
         with (DATA/'user_item_matching_scores_in_scope.csv').open(encoding='utf-8-sig',newline='') as file:

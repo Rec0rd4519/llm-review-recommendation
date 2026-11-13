@@ -1,9 +1,6 @@
-"""BM25 over traceable training-review evidence snippets, not relevance labels.
+"""BM25 retrieval over traceable training-review snippets.
 
-Global IDF/length statistics use the eligible in-scope training corpus. Item
-filters select hits after indexing; they do not change collection statistics.
-No validation/test review texts or query-derived relevance judgments are read.
-"""
+Item filters retain corpus-wide IDF and length statistics."""
 from collections import Counter,defaultdict
 from pathlib import Path
 import csv

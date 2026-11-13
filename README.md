@@ -1,20 +1,20 @@
 # LLM-Assisted Review-Based Personalized Recommendation
 
-A pilot implementation for a research proposal on review-based recommendation. The project explores how review-derived user and item representations can be coordinated with explicitly stated current requirements, while retaining supporting evidence for inspection.
+This prototype combines review-based user and item profiles with a shopper's current request. It was built to test the data flow and ranking choices in a research proposal.
 
-The original study processed **2,029 training reviews from 253 users**, constructed **341 item profiles**, and used **297 in-scope products** for recommendation. A separate offline experiment compares four ranking strategies.
+The research pipeline processed **2,029 training reviews from 253 users**, built **341 item profiles**, and used **297 in-scope products** for recommendation. The app's quick-start dataset contains three fictional users so it can run without the original review corpus.
 
-## Inspect the research version
+## Research code and results
 
-- [Research implementation and data flow](research/README.md): historical LLM extraction, evidence checks, profile aggregation, and baseline scoring code.
-- [Selected original-data outputs](research/examples/research_snapshot.json): actual profile statistics and three recommendation cases, with user identifiers and review text omitted.
-- [Offline experiment report](reports/offline_ranking_comparison.md): methods, results, denominators, and limitations.
+- [Research pipeline](research/README.md): LLM extraction, evidence checks, user and item profiles, and historical scoring.
+- [Research output examples](research/examples/research_snapshot.json): profile statistics and three recommendation cases. User identifiers and review text are omitted.
+- [Offline comparison](reports/offline_ranking_comparison.md): four ranking strategies, results, and evaluation limits.
 
-The research implementation and its results are separate from the **3-user synthetic quick-start dataset** below. Original review data and manual audit workbooks are not bundled; [reproduction instructions](docs/REPRODUCIBILITY.md) describe the required prepared inputs.
+Original reviews and manual audit workbooks are not bundled. The [reproduction guide](docs/REPRODUCIBILITY.md) lists the inputs needed to rerun the research experiment.
 
-## Run the interactive demo (synthetic data)
+## Run the demo
 
-Python 3.11 or later is required. In the project directory, run:
+Use Python 3.11 or later. From the project directory:
 
 ```powershell
 python -m venv .venv
@@ -22,35 +22,29 @@ python -m venv .venv
 .venv\Scripts\python.exe src/prototype_app.py
 ```
 
-On macOS or Linux, replace `.venv\Scripts\python.exe` with `.venv/bin/python`.
+On macOS/Linux, use `.venv/bin/python` instead of `.venv\Scripts\python.exe`.
 
-Open **http://127.0.0.1:8765**. If the port is busy, add `--port 8766` to the last command.
+Open **http://127.0.0.1:8765**. If the port is busy, add `--port 8766` to the last command. Select `DEMO-USER-001`, keep the moisturizer request, and click **Parse request**, then **Recommend**. Expand a product card to inspect its evidence, or export the result as JSON.
 
-Select `DEMO-USER-001`, keep the default moisturizer request, and click **Parse request**, then **Recommend**. Expand a product card to inspect its evidence, or export the result as JSON.
-
-The bundled dataset has **3 fictional users, 12 products, and 12 synthetic reviews**. Its three example requests use saved interpretations and work without a running model:
-
-- A fast-absorbing, non-greasy moisturizer.
-- A sulfate-free shampoo, with verified and unverified candidates shown separately.
-- A nail-polish request whose priority comparison needs clarification.
+The demo has **3 fictional users, 12 products, and 12 synthetic reviews**. Three requests use saved interpretations and need no model server: a non-greasy moisturizer, a sulfate-free shampoo, and a nail-polish priority comparison that needs clarification. See the [data card](data/demo/DATA_CARD.md).
 
 ## Parse a new request
 
-Install [Ollama](https://ollama.com/) and download the model:
+Install and start [Ollama](https://ollama.com/), then download the model:
 
 ```sh
 ollama pull qwen3.5:9b
 ```
 
-Start Ollama, enter an English request, and enable live parsing in the app. Extraction uses a draft followed by one constrained regeneration, with at most two model calls. Traces are saved under `outputs/prototype_sessions/`.
+Enter an English request and enable live parsing in the app. Extraction uses a draft and one constrained regeneration, with at most two model calls. Request and response traces go to `outputs/prototype_sessions/`.
 
-The default model is `qwen3.5:9b`. Set `RECOMMENDER_MODEL` to use another compatible model, or `RECOMMENDER_MODEL_DIGEST` to require a specific installed digest.
+`RECOMMENDER_MODEL` selects another compatible model. `RECOMMENDER_MODEL_DIGEST` can require a specific installed digest.
 
-## How ranking works
+## Ranking and retrieval
 
-The app scores products with **0.4 × history + 0.6 × current preference evidence**. It excludes previously reviewed products and checks hard requirements against catalog facts. Candidates with unverified hard requirements appear in a separate list. If the request has no ordinary preferences, scoring uses history alone.
+The app scores products with **0.4 × history + 0.6 × current preference evidence**. It excludes reviewed products and checks hard requirements against catalog facts. Products with unverified requirements appear separately. Without ordinary preferences, scoring uses history alone.
 
-BM25 retrieves related review snippets for the displayed products. It adds evidence to the explanation; it leaves the app's ranking unchanged. The separate experiment also tests using BM25-selected evidence in the ranking itself.
+BM25 retrieves related review snippets for each displayed product without changing its score. The offline experiment separately tests ranking with BM25-selected evidence. [Architecture](docs/ARCHITECTURE.md) describes both paths.
 
 ```powershell
 .venv\Scripts\python.exe src/bm25_review_retrieval.py --query "quick absorption non-greasy" --top-k 3
@@ -58,34 +52,24 @@ BM25 retrieves related review snippets for the displayed products. It adds evide
 .venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-See [architecture](docs/ARCHITECTURE.md) for profile construction and scoring details.
+## Experiment summary
 
-## Offline experiment
+The comparison pairs 253 histories with 72 simulated development queries. Its primary subset has 4,299 combinations. Fixed-weight and query-conditioned Top-5 sets overlap by 97.10% on average.
 
-The original research dataset contains 253 user histories. An experiment paired them with 72 simulated development queries and compared history-only, intent-only, fixed-weight, and query-conditioned ranking. The primary subset contains 4,299 combinations.
+Query-item relevance labels were unavailable, so the comparison measures ranking behavior. Held-out interaction metrics are reported for history-only ranking. The [experiment report](reports/offline_ranking_comparison.md) gives definitions and denominators; the [BM25 report](reports/bm25_retrieval.md) describes the evidence corpus and retrieval checks.
 
-Fixed-weight and query-conditioned rankings had 97.10% mean Top-5 set overlap. Query-item relevance labels were unavailable, so these results describe ranking behavior rather than an accuracy improvement. Held-out interaction metrics are reported separately for history-only ranking.
-
-- [Experiment report and results](reports/offline_ranking_comparison.md)
-- [BM25 implementation](reports/bm25_retrieval.md)
-- [Data requirements and reproduction](docs/REPRODUCIBILITY.md)
-
-The research data is separate from the public demo. This repository includes aggregate results, not the original review corpus or private run logs.
-
-## Project layout
+## Files
 
 ```text
-research/     historical research code and selected original-data outputs
-src/          portable app, intent extraction, retrieval, and ranking
+research/     review-processing code and research output examples
+src/          app, intent extraction, retrieval, and ranking
 prompts/      extraction and correction prompts
-data/demo/    fictional demo data and saved example intents
+data/demo/    fictional data and saved example intents
 data/schemas/ intent JSON schema
-scripts/      demo comparison and research-data import
+scripts/      demo comparison and local data import
 tests/        checks that run without a model server
-reports/      experiment results and verification records
-docs/         architecture, reproduction, and upload instructions
+reports/      results and verification records
+docs/         architecture and reproduction instructions
 ```
 
-The demo data is described in its [data card](data/demo/DATA_CARD.md). [Portability checks](reports/portability_verification.json) cover the saved extraction contracts, original experiment summaries, and tests in a relocated copy. Model calls in the runner test are mocked.
-
-This prototype supports a limited set of English requests and attribute rules. Scores and retrieved snippets need human interpretation. A software license has [not yet been selected](LICENSE_SELECTION.md).
+[Verification records](reports/portability_verification.json) cover extraction-contract parity, experiment summaries, and tests in a relocated copy. Runner tests use mocked model responses. The language rules cover a limited set of English requests. A software license has [not yet been selected](LICENSE_SELECTION.md).

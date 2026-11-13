@@ -6,8 +6,6 @@ import time
 from aspect_extraction import extract_aspects
 
 
-# Paths and configuration
-
 ROOT = Path(__file__).resolve().parents[1]
 
 INPUT_FILE = (
@@ -18,13 +16,9 @@ INPUT_FILE = (
 OUTPUT_DIR = ROOT / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_FILE = (
-    OUTPUT_DIR / "aspect_extraction_full.jsonl"
-)
+OUTPUT_FILE = OUTPUT_DIR / "aspect_extraction_full.jsonl"
 
-SUMMARY_FILE = (
-    OUTPUT_DIR / "aspect_extraction_full_summary.json"
-)
+SUMMARY_FILE = OUTPUT_DIR / "aspect_extraction_full_summary.json"
 
 PILOT_SIZE = 20
 RANDOM_SEED = 42
@@ -33,18 +27,13 @@ RANDOM_SEED = 42
 # Evidence validation
 
 def normalize_text(text):
-
-    return " ".join(
-        str(text).casefold().split()
-    )
+    return " ".join(str(text).casefold().split())
 
 
 def validate_evidence(aspects, review_text):
-
     results = []
 
     for aspect in aspects:
-
         item = dict(aspect)
 
         evidence = item.get("evidence", "")
@@ -69,9 +58,7 @@ print("\n[1] Loading aligned reviews...")
 records = []
 
 with open(INPUT_FILE, "r", encoding="utf-8") as f:
-
     for line in f:
-
         if line.strip():
             records.append(json.loads(line))
 
@@ -104,19 +91,13 @@ print("Distinct users:", len(selected_users))
 processed_ids = set()
 
 if OUTPUT_FILE.exists():
-
     with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
-
         for line in f:
-
             if line.strip():
-
                 old = json.loads(line)
 
                 if old.get("status") == "success":
-                    processed_ids.add(
-                        old["train_row_id"]
-                    )
+                    processed_ids.add(old["train_row_id"])
 
 print("Already processed:", len(processed_ids))
 
@@ -132,9 +113,7 @@ evidence_valid_count = 0
 start_time = time.time()
 
 with open(OUTPUT_FILE, "a", encoding="utf-8") as fout:
-
     for index, record in enumerate(selected, start=1):
-
         row_id = record["train_row_id"]
 
         if row_id in processed_ids:
@@ -149,7 +128,6 @@ with open(OUTPUT_FILE, "a", encoding="utf-8") as fout:
         )
 
         try:
-
             task_start = time.time()
 
             result = extract_aspects(review_text)
@@ -186,52 +164,36 @@ with open(OUTPUT_FILE, "a", encoding="utf-8") as fout:
                 "processing_seconds": round(elapsed, 2)
             }
 
-            fout.write(
-                json.dumps(output, ensure_ascii=False) + "\n"
-            )
+            fout.write(json.dumps(output, ensure_ascii=False) + "\n")
 
             fout.flush()
 
             success_count += 1
 
             print("Aspects extracted:", len(aspects))
-            print(
-                f"Valid evidence: {valid_count}/{len(aspects)}"
-            )
+            print(f"Valid evidence: {valid_count}/{len(aspects)}")
             print(f"Time: {elapsed:.2f}s")
 
         except Exception as e:
-
             error_count += 1
 
             print("ERROR:", str(e))
 
 
-# Generate summary
-
 total_time = time.time() - start_time
 
 summary = {
-
 "total_selected_reviews": PILOT_SIZE,
-
     "selected_users": len(selected_users),
-
     "new_success": success_count,
-
     "errors": error_count,
-
     "total_evidence": evidence_total,
-
     "valid_evidence": evidence_valid_count,
-
     "evidence_validity_rate": (
         round(evidence_valid_count / evidence_total, 4)
         if evidence_total else None
     ),
-
     "total_processing_seconds": round(total_time, 2),
-
     "average_seconds_per_review": (
         round(total_time / success_count, 2)
         if success_count else None
@@ -239,7 +201,6 @@ summary = {
 }
 
 with open(SUMMARY_FILE, "w", encoding="utf-8") as f:
-
     json.dump(
         summary,
         f,

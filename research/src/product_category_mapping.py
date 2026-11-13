@@ -49,13 +49,10 @@ EXPECTED_ITEMS = 341
 # Load and Validate Product Category Mapping
 
 def load_product_category_mapping(csv_path):
-
     csv_path = Path(csv_path)
 
     if not csv_path.exists():
-        raise FileNotFoundError(
-            f"Category mapping file not found: {csv_path}"
-        )
+        raise FileNotFoundError(f"Category mapping file not found: {csv_path}")
 
     required_fields = {
         "parent_asin",
@@ -79,49 +76,29 @@ def load_product_category_mapping(csv_path):
         encoding="utf-8-sig",
         newline=""
     ) as f:
-
         reader = csv.DictReader(f)
 
-        missing_fields = (
-            required_fields - set(reader.fieldnames or [])
-        )
+        missing_fields = required_fields - set(reader.fieldnames or [])
 
         if missing_fields:
-            raise ValueError(
-                f"Missing CSV columns: {missing_fields}"
-            )
+            raise ValueError(f"Missing CSV columns: {missing_fields}")
 
         for line_number, row in enumerate(reader, start=2):
-
-            asin = (
-                row.get("parent_asin") or ""
-            ).strip()
+            asin = (row.get("parent_asin") or "").strip()
 
             if not asin:
-                raise ValueError(
-                    f"Empty parent_asin at line {line_number}"
-                )
+                raise ValueError(f"Empty parent_asin at line {line_number}")
 
             if asin in mapping:
-                raise ValueError(
-                    f"Duplicate ASIN: {asin}"
-                )
+                raise ValueError(f"Duplicate ASIN: {asin}")
 
-            scope_status = (
-                row.get("final_scope_status") or ""
-            ).strip()
+            scope_status = (row.get("final_scope_status") or "").strip()
 
-            product_category = (
-                row.get("final_product_category") or ""
-            ).strip()
+            product_category = (row.get("final_product_category") or "").strip()
 
-            product_type = (
-                row.get("final_product_type") or ""
-            ).strip()
+            product_type = (row.get("final_product_type") or "").strip()
 
-            audit_status = (
-                row.get("audit_status") or ""
-            ).strip()
+            audit_status = (row.get("audit_status") or "").strip()
 
             if scope_status not in VALID_SCOPE_STATUSES:
                 raise ValueError(
@@ -137,7 +114,6 @@ def load_product_category_mapping(csv_path):
 
             # In-scope products must have one valid category.
             if scope_status == "in_scope":
-
                 if product_category not in ALLOWED_CATEGORIES:
                     raise ValueError(
                         f"Invalid or missing category for {asin}: "
@@ -147,7 +123,6 @@ def load_product_category_mapping(csv_path):
             # Non-single-category products must not have
             # a confirmed single top-level category.
             else:
-
                 if product_category:
                     raise ValueError(
                         f"Unexpected single category for {asin}: "
@@ -155,31 +130,13 @@ def load_product_category_mapping(csv_path):
                     )
 
             mapping[asin] = {
-
-                "product_category": (
-                    product_category or None
-                ),
-
-                "product_type": (
-                    product_type or None
-                ),
-
+                "product_category": (product_category or None),
+                "product_type": (product_type or None),
                 "scope_status": scope_status,
-
                 "audit_status": audit_status,
-
-                "mapping_resolution": (
-                    row["final_mapping_resolution"].strip()
-                ),
-
-                "audit_id": (
-                    row["audit_id"].strip() or None
-                ),
-
-                "audit_decision": (
-                    row["audit_decision"].strip() or None
-                )
-
+                "mapping_resolution": (row["final_mapping_resolution"].strip()),
+                "audit_id": (row["audit_id"].strip() or None),
+                "audit_decision": (row["audit_decision"].strip() or None)
             }
 
             scope_counts[scope_status] += 1
@@ -194,14 +151,10 @@ def load_product_category_mapping(csv_path):
         )
 
     if dict(scope_counts) != EXPECTED_SCOPE_COUNTS:
-        raise ValueError(
-            f"Scope distribution mismatch: {dict(scope_counts)}"
-        )
+        raise ValueError(f"Scope distribution mismatch: {dict(scope_counts)}")
 
     if dict(audit_counts) != EXPECTED_AUDIT_COUNTS:
-        raise ValueError(
-            f"Audit distribution mismatch: {dict(audit_counts)}"
-        )
+        raise ValueError(f"Audit distribution mismatch: {dict(audit_counts)}")
 
     print("\nProduct category mapping validation: PASSED")
 

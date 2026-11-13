@@ -78,7 +78,7 @@ def polarity(text,yes,no):
 
 
 def preference_signal(preference,text):
-    """A lexical hint from a cited quote, never a guaranteed product fact."""
+    """Match a preference against lexical evidence in a cited quote."""
     a=preference['normalized_aspect'];v=key(preference['desired_value'])
     target=None;observed=None
     if a in ('absorption_speed','drying_speed'):
@@ -119,7 +119,7 @@ def preference_signal(preference,text):
 
 
 def hard_fact(constraint,metadata):
-    """Only narrow, explicit catalog claims/fields; unknown is not a pass."""
+    """Check supported catalog fields; return unknown when evidence is missing."""
     operator=constraint['operator']; value=constraint['value']
     details=metadata.get('details') or {}
     numeric_keys={

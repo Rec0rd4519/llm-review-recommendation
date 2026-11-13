@@ -1,6 +1,6 @@
 # BM25 review retrieval
 
-The app retrieves up to three query-related review snippets for each displayed product. Each hit includes its review ID, BM25 score, and matched terms. These fields supplement the explanation and leave product ranks, preference scores, and hard-constraint checks unchanged.
+The app retrieves up to three query-related review snippets for each displayed product. Each hit includes its review ID, BM25 score, and matched terms. Retrieval runs after ranking, so these fields leave scores and constraint checks unchanged.
 
 ## Try it
 
@@ -10,7 +10,7 @@ Expand **BM25: Query-related review snippets** in a product card, or run:
 python src/bm25_review_retrieval.py --query "absorbs quickly non-greasy" --item-id DEMO-ITEM-004 --top-k 3
 ```
 
-Omit `--item-id` to search the whole corpus. Repeat it to select several products. `--output` saves a new JSON file. The command uses the public fictional dataset; the counts below describe the original research corpus.
+Omit `--item-id` to search the whole corpus. Repeat it to select several products. `--output` saves a new JSON file. This command uses the fictional demo. The corpus counts below refer to the research dataset.
 
 ## Corpus
 
@@ -37,6 +37,6 @@ The formula follows the positive-IDF form documented by [Apache Lucene](https://
 
 ## Checks and use in ranking
 
-The original integration passed 57 numerical, provenance, and integration checks. Six scenarios matched the previous engine after removing the added retrieval fields. Those detailed checks and source snapshots remain in the private research run; the public test suite covers the demo corpus and app integration.
+The original integration passed 57 numerical, provenance, and integration checks. Six scenarios matched the previous engine after removing the added retrieval fields. Detailed records are retained with the research run. The repository tests cover the demo corpus and app integration.
 
-A high BM25 score means lexical overlap, which can include negative reviews. Preference interpretation and hard-constraint verification are separate steps. The [offline comparison](offline_ranking_comparison.md) tests BM25-selected evidence as an experimental ranking component; the interactive app keeps fixed-weight ranking.
+BM25 ranks lexical matches, including negative reviews. Preference interpretation and hard-constraint verification are separate steps. The [offline comparison](offline_ranking_comparison.md) tests BM25-selected evidence as an experimental ranking component; the interactive app keeps fixed-weight ranking.

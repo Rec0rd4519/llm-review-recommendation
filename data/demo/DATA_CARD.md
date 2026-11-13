@@ -1,11 +1,11 @@
 # Demo data
 
-The dataset contains 3 fictional users, 12 products, and 12 synthetic reviews. Product names, catalog details, review texts, and user identifiers were written for the demo. No real customer identifiers or Amazon review text is included.
+The demo contains 3 fictional users, 12 products, and 12 synthetic reviews. Product names, catalog details, review texts, and user identifiers were written for this dataset.
 
-The 24 aspect-evidence records were assigned manually. User and item profiles were constructed from them, rather than measured in a new LLM extraction run. Demo history weights use `log(1 + support count)`; item sentiment is +1 or -1; match scores average shared aspects using those weights. This is a simplified fixture for exercising the app.
+Its 24 aspect-evidence records were assigned manually. Profiles were constructed from those records. History weights use `log(1 + support count)`, item sentiment is +1 or -1, and match scores average shared attributes using those weights. These fixtures exercise the app; they are not measurements from a new LLM extraction run.
 
-The training CSV identifies demo review pairs. The mapping filename retains `341` for loader compatibility, although the file has 12 rows.
+The training CSV identifies demo review pairs. The mapping filename retains `341` for loader compatibility, although it contains 12 rows.
 
-The three saved intent examples come from project-authored queries and adopted Run14 interpretations. They cover ordinary preferences, a sulfate-free requirement, and a priority comparison needing clarification. The interface labels them as cached examples.
+The three saved intents use project-authored queries and adopted Run14 interpretations. They cover ordinary preferences, a sulfate-free requirement, and a priority comparison needing clarification. The app labels them as saved examples.
 
-This dataset demonstrates app behavior. The reported research experiment uses separate data described in [reproduction instructions](../../docs/REPRODUCIBILITY.md).
+Research results use a separate dataset. See [reproduction instructions](../../docs/REPRODUCIBILITY.md).

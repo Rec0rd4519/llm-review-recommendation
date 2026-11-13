@@ -1,7 +1,7 @@
 {
-  "description": "Selected aggregates and recommendation outputs from the original prepared research data. This is a static inspection example, not the synthetic app dataset or a new quality evaluation.",
-  "selection": "First user in the research app; item B08C71WBLC is the top result for the shown moisturizer request. Up to six aspects are shown per profile.",
-  "omissions": "User identifiers, review text, quoted evidence, review identifiers and detailed source links are omitted. Numeric values and statuses are copied from the original profiles and saved local app responses.",
+  "description": "Selected profile aggregates and app outputs from the research dataset.",
+  "selection": "First user in the research app. Item B08C71WBLC ranks first for the moisturizer request. Each profile excerpt shows up to six attributes.",
+  "omissions": "User identifiers, review text, quoted evidence, review identifiers, and detailed source links are omitted. Scores and statuses are copied from saved research outputs.",
   "dataset": {
     "training_reviews": 2029,
     "user_records": 253,

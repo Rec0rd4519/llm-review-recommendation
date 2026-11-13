@@ -1,0 +1,60 @@
+{
+  "run14_policy_contract_parity": {
+    "saved_fresh_drafts_checked": 72,
+    "contracts_variants_traces_identical": true,
+    "original_deliveries_pass_portable_validator": true
+  },
+  "new_real_model_calls": 0,
+  "prepared_research_reproduction": {
+    "all_non_timing_summary_fields_identical": true,
+    "fields_compared": [
+      "status",
+      "unique_queries",
+      "user_histories",
+      "artificial_combinations",
+      "combination_status_counts",
+      "primary_per_strategy",
+      "query_macro_primary_metrics",
+      "pairwise_top5_overlap",
+      "feature_score_differences",
+      "secondary_history_only_observed_holdout",
+      "holdout_target_outside_scope",
+      "holdout_target_in_supplied_history",
+      "sources_unchanged",
+      "new_model_calls",
+      "new_query_item_relevance_labels",
+      "conclusion_limits",
+      "primary_metric_reference",
+      "holdout_metric_reference"
+    ],
+    "new_real_model_calls": 0
+  },
+  "relocated_clean_copy": {
+    "unit_tests_passed": 7,
+    "private_research_and_workspace_reads_blocked": true,
+    "interpreter_dependency_directory_excepted": true
+  },
+  "http_demo_scenarios": [
+    {
+      "intent_id": "INTENT-BEAUTY-004",
+      "status": "ok",
+      "recommendations": 5,
+      "unverified_candidates": 0
+    },
+    {
+      "intent_id": "INTENT-BEAUTY-007",
+      "status": "ok",
+      "recommendations": 1,
+      "unverified_candidates": 1
+    },
+    {
+      "intent_id": "NEW-BEAUTY-016",
+      "status": "needs_clarification",
+      "recommendations": 0,
+      "unverified_candidates": 0
+    }
+  ],
+  "javascript_syntax": "passed",
+  "local_markdown_links": "passed",
+  "personal_path_and_common_secret_pattern_scan": "passed"
+}

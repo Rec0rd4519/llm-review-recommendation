@@ -1,0 +1,12 @@
+{"train_row_id": 1, "user_id": "DEMO-USER-001", "parent_asin": "DEMO-ITEM-001", "rating": 5, "review_title": "Synthetic demonstration review", "review_text": "It absorbs quickly. It feels non-greasy."}
+{"train_row_id": 2, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-002", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "The cream absorbs slowly. The texture feels non-greasy."}
+{"train_row_id": 3, "user_id": "DEMO-USER-003", "parent_asin": "DEMO-ITEM-003", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "This moisturizer absorbs quickly. It leaves a greasy film."}
+{"train_row_id": 4, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-004", "rating": 5, "review_title": "Synthetic demonstration review", "review_text": "The moisturizer absorbs fast. The cream is not greasy."}
+{"train_row_id": 5, "user_id": "DEMO-USER-003", "parent_asin": "DEMO-ITEM-005", "rating": 3, "review_title": "Synthetic demonstration review", "review_text": "It absorbs slowly on my skin. It feels greasy."}
+{"train_row_id": 6, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-006", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "It absorbs quickly after spreading. The finish is non-greasy."}
+{"train_row_id": 7, "user_id": "DEMO-USER-003", "parent_asin": "DEMO-ITEM-007", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "It absorbs quickly. The lotion is not greasy."}
+{"train_row_id": 8, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-008", "rating": 3, "review_title": "Synthetic demonstration review", "review_text": "It absorbs slowly. It feels non-greasy once absorbed."}
+{"train_row_id": 9, "user_id": "DEMO-USER-001", "parent_asin": "DEMO-ITEM-009", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "The shampoo has a mild scent. It produces thick lather."}
+{"train_row_id": 10, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-010", "rating": 5, "review_title": "Synthetic demonstration review", "review_text": "The shampoo has a light scent. It gives thick lather."}
+{"train_row_id": 11, "user_id": "DEMO-USER-003", "parent_asin": "DEMO-ITEM-011", "rating": 3, "review_title": "Synthetic demonstration review", "review_text": "The shampoo has a strong scent. It makes thick lather."}
+{"train_row_id": 12, "user_id": "DEMO-USER-002", "parent_asin": "DEMO-ITEM-012", "rating": 4, "review_title": "Synthetic demonstration review", "review_text": "The scent is mild. The lather is thin."}

@@ -1,0 +1,4 @@
+# Direct dependencies of the current prototype runtime.
+# Full-data preparation dependencies are not included here.
+ollama==0.6.3
+jsonschema==4.26.0

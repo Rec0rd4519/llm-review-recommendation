@@ -1,0 +1,353 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "current_intent.schema.json",
+  "title": "Current Intent Schema",
+  "description": "Structured representation of explicitly stated current product-purchasing requirements.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intent_id",
+    "source",
+    "task",
+    "preferences",
+    "hard_constraints",
+    "priority_relations",
+    "unresolved_requirements",
+    "extraction_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "task": {
+      "$ref": "#/$defs/task"
+    },
+    "preferences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/preference"
+      }
+    },
+    "hard_constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hard_constraint"
+      }
+    },
+    "priority_relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/priority_relation"
+      }
+    },
+    "unresolved_requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unresolved_requirement"
+      }
+    },
+    "extraction_policy": {
+      "$ref": "#/$defs/extraction_policy"
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_type",
+        "original_text",
+        "language"
+      ],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "user_search_query",
+            "user_message",
+            "explicit_ui_selection"
+          ]
+        },
+        "original_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string"
+        }
+      }
+    },
+    "task_field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_text",
+        "normalized_value",
+        "evidence",
+        "status"
+      ],
+      "properties": {
+        "raw_text": {
+          "type": ["string", "null"]
+        },
+        "normalized_value": {
+          "type": ["string", "null"]
+        },
+        "evidence": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "ambiguous",
+            "not_stated"
+          ]
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "product_type",
+        "recipient",
+        "use_case"
+      ],
+      "properties": {
+        "product_type": {
+          "$ref": "#/$defs/task_field"
+        },
+        "recipient": {
+          "$ref": "#/$defs/task_field"
+        },
+        "use_case": {
+          "$ref": "#/$defs/task_field"
+        }
+      }
+    },
+    "aspect_alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_aspect",
+        "status"
+      ],
+      "properties": {
+        "profile_aspect": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "matched",
+            "unmatched",
+            "ambiguous"
+          ]
+        }
+      }
+    },
+    "preference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_expression",
+        "aspect_raw",
+        "normalized_aspect",
+        "desired_value",
+        "direction",
+        "priority_level",
+        "evidence",
+        "aspect_alignment"
+      ],
+      "properties": {
+        "raw_expression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aspect_raw": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normalized_aspect": {
+          "type": "string",
+          "minLength": 1
+        },
+        "desired_value": {
+          "type": ["string", "null"]
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "prefer",
+            "avoid"
+          ]
+        },
+        "priority_level": {
+          "type": "string",
+          "enum": [
+            "explicit_high",
+            "explicit_medium",
+            "explicit_low",
+            "unspecified"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aspect_alignment": {
+          "$ref": "#/$defs/aspect_alignment"
+        }
+      }
+    },
+    "hard_constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_expression",
+        "aspect_raw",
+        "normalized_aspect",
+        "operator",
+        "value",
+        "unit",
+        "evidence",
+        "aspect_alignment"
+      ],
+      "properties": {
+        "raw_expression": {
+          "type": "string"
+        },
+        "aspect_raw": {
+          "type": "string"
+        },
+        "normalized_aspect": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals",
+            "at_most",
+            "at_least",
+            "less_than",
+            "greater_than",
+            "must_include",
+            "must_exclude",
+            "one_of",
+            "boolean_true",
+            "boolean_false"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array"
+          ]
+        },
+        "unit": {
+          "type": ["string", "null"]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aspect_alignment": {
+          "$ref": "#/$defs/aspect_alignment"
+        }
+      }
+    },
+    "priority_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relation",
+        "higher_priority_aspects",
+        "lower_priority_aspects",
+        "evidence"
+      ],
+      "properties": {
+        "relation": {
+          "const": "more_important_than"
+        },
+        "higher_priority_aspects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "lower_priority_aspects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "unresolved_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_expression",
+        "reason",
+        "possible_interpretations",
+        "evidence"
+      ],
+      "properties": {
+        "raw_expression": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "possible_interpretations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "string"
+        }
+      }
+    },
+    "extraction_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "only_explicit_current_input",
+        "historical_profile_used",
+        "system_generated_query_used"
+      ],
+      "properties": {
+        "only_explicit_current_input": {
+          "const": true
+        },
+        "historical_profile_used": {
+          "const": false
+        },
+        "system_generated_query_used": {
+          "const": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "status": "completed_preliminary_offline_ranking_comparison",
+  "unique_queries": 72,
+  "user_histories": 253,
+  "artificial_combinations": 18216,
+  "combination_status_counts": {
+    "rankable": 12639,
+    "all_candidates_seen": 11,
+    "no_verified_hard_candidates": 3036,
+    "no_catalog_match": 2277,
+    "needs_clarification": 253
+  },
+  "primary_per_strategy": {
+    "history_only": {
+      "cases": 4299.0,
+      "top5_overlap_with_history": 1.0,
+      "top10_overlap_with_history": 1.0,
+      "top5_identical_to_history": 1.0,
+      "internal_rule_support_at5": 0.09983717143521487,
+      "internal_rule_resolved_at5": 0.13212374970923232,
+      "internal_rule_conflict_at5": 0.015212840195394366,
+      "mean_internal_history_quality_at5": 0.9078554346359604,
+      "candidate_score_tie_fraction": 0.09789311501171828
+    },
+    "intent_only": {
+      "cases": 4299.0,
+      "top5_overlap_with_history": 0.33165852523843453,
+      "top10_overlap_with_history": 0.7276808560130331,
+      "top5_identical_to_history": 0.0,
+      "internal_rule_support_at5": 0.3015585019772019,
+      "internal_rule_resolved_at5": 0.3015585019772019,
+      "internal_rule_conflict_at5": 0.005768783438008857,
+      "mean_internal_history_quality_at5": 0.7964977773435651,
+      "candidate_score_tie_fraction": 0.8490827930545375
+    },
+    "fixed_weight": {
+      "cases": 4299.0,
+      "top5_overlap_with_history": 0.7697138869504424,
+      "top10_overlap_with_history": 0.8822051639916489,
+      "top5_identical_to_history": 0.4152128401953943,
+      "internal_rule_support_at5": 0.3015352407536615,
+      "internal_rule_resolved_at5": 0.3015352407536615,
+      "internal_rule_conflict_at5": 0.010793207722726243,
+      "mean_internal_history_quality_at5": 0.8846337276343345,
+      "candidate_score_tie_fraction": 0.06703533412863343
+    },
+    "query_conditioned": {
+      "cases": 4299.0,
+      "top5_overlap_with_history": 0.7967899511514318,
+      "top10_overlap_with_history": 0.8822284252151893,
+      "top5_identical_to_history": 0.41591067690160505,
+      "internal_rule_support_at5": 0.2773435682716849,
+      "internal_rule_resolved_at5": 0.2773435682716849,
+      "internal_rule_conflict_at5": 0.010793207722726243,
+      "mean_internal_history_quality_at5": 0.8879506364968635,
+      "candidate_score_tie_fraction": 0.07456562658565279
+    }
+  },
+  "query_macro_primary_metrics": {
+    "history_only": {
+      "unique_queries": 17,
+      "top5_overlap_with_history": 1.0,
+      "top10_overlap_with_history": 1.0,
+      "top5_identical_to_history": 1.0,
+      "internal_rule_support_at5": 0.09979074633806106,
+      "internal_rule_resolved_at5": 0.1320623110904443,
+      "internal_rule_conflict_at5": 0.015205766100906784,
+      "mean_internal_history_quality_at5": 0.9078317925712637,
+      "candidate_score_tie_fraction": 0.09789652960509433
+    },
+    "intent_only": {
+      "unique_queries": 17,
+      "top5_overlap_with_history": 0.3317959040378824,
+      "top10_overlap_with_history": 0.727807486631017,
+      "top5_identical_to_history": 0.0,
+      "internal_rule_support_at5": 0.30141827481980926,
+      "internal_rule_resolved_at5": 0.30141827481980926,
+      "internal_rule_conflict_at5": 0.005766100906765886,
+      "mean_internal_history_quality_at5": 0.7964667889504065,
+      "candidate_score_tie_fraction": 0.8490849707322052
+    },
+    "fixed_weight": {
+      "unique_queries": 17,
+      "top5_overlap_with_history": 0.7698209718670075,
+      "top10_overlap_with_history": 0.8822599395489431,
+      "top5_identical_to_history": 0.41548477098349224,
+      "internal_rule_support_at5": 0.30139502441292715,
+      "internal_rule_resolved_at5": 0.30139502441292715,
+      "internal_rule_conflict_at5": 0.010788188793303862,
+      "mean_internal_history_quality_at5": 0.8846208838523609,
+      "candidate_score_tie_fraction": 0.06705309784122894
+    },
+    "query_conditioned": {
+      "unique_queries": 17,
+      "top5_overlap_with_history": 0.7968844454777962,
+      "top10_overlap_with_history": 0.8822831899558252,
+      "top5_identical_to_history": 0.4161822831899558,
+      "internal_rule_support_at5": 0.27721460125552244,
+      "internal_rule_resolved_at5": 0.27721460125552244,
+      "internal_rule_conflict_at5": 0.010788188793303862,
+      "mean_internal_history_quality_at5": 0.8879362503252742,
+      "candidate_score_tie_fraction": 0.07457988865097723
+    }
+  },
+  "pairwise_top5_overlap": {
+    "history_only__intent_only": 0.33165852523843453,
+    "history_only__fixed_weight": 0.7697138869504424,
+    "history_only__query_conditioned": 0.7967899511514318,
+    "intent_only__fixed_weight": 0.5160735054663745,
+    "intent_only__query_conditioned": 0.4916492207490082,
+    "fixed_weight__query_conditioned": 0.9709699930216483
+  },
+  "feature_score_differences": {
+    "item_query_preference_cases": 318,
+    "changed_intent_score": 4
+  },
+  "timing": {
+    "shared_history_table_loading_and_index_build_excluded": true,
+    "intent_features_total_ms_over72_queries": 18.36449999245815,
+    "conditioned_features_total_ms_over72_queries": 16.961399844149128,
+    "mean_warm_rank_ms_per_rankable_combination": {
+      "history_only": 0.001960764252133794,
+      "intent_only": 0.0016096369182467412,
+      "fixed_weight": 0.0016912414637040628,
+      "query_conditioned": 0.0016125643205511303
+    }
+  },
+  "secondary_history_only_observed_holdout": {
+    "all253": {
+      "cases": 253.0,
+      "HR@5": 0.015810276679841896,
+      "NDCG@5": 0.007427413742896385,
+      "HR@10": 0.03162055335968379,
+      "NDCG@10": 0.012139488103804809,
+      "MRR@10": 0.006455862977602109
+    },
+    "target_in_scope": {
+      "cases": 160.0,
+      "HR@5": 0.025,
+      "NDCG@5": 0.011744597980954908,
+      "HR@10": 0.05,
+      "NDCG@10": 0.019195565564141353,
+      "MRR@10": 0.010208333333333335
+    }
+  },
+  "holdout_target_outside_scope": 93,
+  "holdout_target_in_supplied_history": 0,
+  "sources_unchanged": true,
+  "new_model_calls": 0,
+  "new_query_item_relevance_labels": 0,
+  "conclusion_limits": "No intent-aware NDCG/Recall or claimed relevance accuracy without query-item labels. No parameter tuning, significance claims, real-user generalization or accuracy uplift.",
+  "primary_metric_reference": "Internal rule rates are diagnostic and partly optimized by the compared methods; not independent relevance evaluation.",
+  "holdout_metric_reference": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html"
+}

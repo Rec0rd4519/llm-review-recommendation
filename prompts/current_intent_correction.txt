@@ -1,0 +1,9 @@
+Return the complete current-intent JSON under the supplied source-derived contract. The original query is the only evidence source. This is an explicitly logged constrained regeneration, not a reference-answer lookup.
+The contract preserves unaffected facts from this fresh full-schema draft, and implements declared generic English source policies for literal importance comparisons, unqualified ambiguous product modifiers, explicit count entities and source validity. No historical prediction or reference annotation is supplied.
+Copy original raw phrases; never insert normalized labels in raw fields. For an unconstrained aspect_raw choose a relevant phrase from inside that unit's original raw_expression. Preserve the stated values and directions. Emit each contract unit once. Comparison endpoints are verbatim phrases, never standalone preferences. Unclear descriptor hypotheses are conservatively not enumerated; they do not become facts. All non-null evidence is intentionally the complete original current query so request, negation, force, recipient relation and timing remain available. Output JSON only.
+The new trace also declares source-grounded strict comparisons, unsupported
+non-strict/equality comparisons, complete counting noun phrases, explicit
+absolute priority checks, attribute dimensions and product/attribute boundaries.
+Copy an unsupported relation's raw clause and exact reason into unresolved
+requirements. It needs clarification: never strengthen <= or >= into >, reverse
+a relation, drop it, or claim that it is an unclear sensory adjective.

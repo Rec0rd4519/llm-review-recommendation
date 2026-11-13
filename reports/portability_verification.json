@@ -56,5 +56,15 @@
   ],
   "javascript_syntax": "passed",
   "local_markdown_links": "passed",
-  "personal_path_and_common_secret_pattern_scan": "passed"
+  "personal_path_and_common_secret_pattern_scan": "passed",
+  "research_publication": {
+    "historical_scripts": 12,
+    "original_python_asts_identical": true,
+    "historical_preprocessing_rerun": false,
+    "portable_unit_tests_passed": 7,
+    "research_data_bootstrap_users": 253,
+    "research_data_bootstrap_in_scope_items": 297,
+    "both_dataset_labels_checked": true,
+    "new_real_model_calls": 0
+  }
 }

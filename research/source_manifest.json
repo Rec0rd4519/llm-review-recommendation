@@ -1,0 +1,65 @@
+{
+  "description": "Historical research source with section headings and whitespace tidied. Every Python AST, including prompt strings, matches the original source.",
+  "files": {
+    "prepare_dataset.py": {
+      "original_sha256": "50bfe9bf0521cf0fda4e778bbf7223ae2fdf9d408405cc3200ddf62cd359f0da",
+      "published_sha256": "92bf0010bd967411b4d74d6158e8d9953c55f24ed0b185726d2d6e223f1c3073",
+      "executable_ast_identical": true
+    },
+    "align_reviews.py": {
+      "original_sha256": "914b08441a5b102357d08ba239415b68951b066e0c34e8b565f2289d9b49c290",
+      "published_sha256": "533014b149881dda86e9244d742fe2ef0cf83af923327a9f5dfcca459c79fc43",
+      "executable_ast_identical": true
+    },
+    "aspect_extraction.py": {
+      "original_sha256": "2c33569c3262cff747d4c997b27c04a93d52ae74c0fd53770a57afd0d85a501c",
+      "published_sha256": "ca685a9c5b7a88d97085def456527284c6ec7d9df494fed693d33153b89bb6ea",
+      "executable_ast_identical": true
+    },
+    "full_aspect_extraction.py": {
+      "original_sha256": "f7dc022358e9c6cbb5386f9c0937ee1338f3f1765407c48be36c0b5a520c565a",
+      "published_sha256": "b21766f52a5b4c10a09cb10cf07a8b66f96a378bb7a7d6b84aa9cc0f5d11ac36",
+      "executable_ast_identical": true
+    },
+    "audit_aspect_extraction.py": {
+      "original_sha256": "917c4d8d148ce02b5f36090111d54fa795dfd60abb420378b635e02d53693f9a",
+      "published_sha256": "26d22a28825b7cc1091033ac8155f845e5be3c168101fcec612cd9fcde29ccc1",
+      "executable_ast_identical": true
+    },
+    "prepare_aspect_data.py": {
+      "original_sha256": "928bfc0f49c9596a3b9ece62fffa8c18d51f5620588ee7c85a38bbe786253c8e",
+      "published_sha256": "841883d2015570fcc8341c92751148337b17e537a9f326c1eddfb0dbc4ce186a",
+      "executable_ast_identical": true
+    },
+    "prepare_profile_data.py": {
+      "original_sha256": "5c1522879714774bc0b7744762aebde825e4ee09e9405d82c292d11647c42004",
+      "published_sha256": "ceefd47f4b8d4d1d00c170c70d6a683804bd21193511569d13246cfb0a08cafe",
+      "executable_ast_identical": true
+    },
+    "build_user_profiles.py": {
+      "original_sha256": "5232e8bdb56245aca6c1a9f2aa22cb9e77449e388f8ad7bbc0520cd3696b6599",
+      "published_sha256": "62dce0e1b7bb6b3fac631b17eadee6835ee176303ea5588bd6dfe0e01f0ca1f6",
+      "executable_ast_identical": true
+    },
+    "build_user_profiles_in_scope.py": {
+      "original_sha256": "4a71e78f98c4a3f2c9982ea1d535883abf7d3f2e89bec1eefd94523ce04721dd",
+      "published_sha256": "b267a1d0b15bbbb52a7010d6b71a72c1835cf069abe79325677d025f0ad040cd",
+      "executable_ast_identical": true
+    },
+    "build_item_profiles.py": {
+      "original_sha256": "512fbea5effea5dc96122dcf7ab8b42db724c36ac41304b430f49d21adfd3d9a",
+      "published_sha256": "d4f515e3e2ac4be2c56d1f2344198e137a785f88d1909a633ef9b3ee91fe84f3",
+      "executable_ast_identical": true
+    },
+    "build_user_item_matching_in_scope.py": {
+      "original_sha256": "51aa4528a0e2889943edfd93bd73cbe8382d230b7261fa86c34afbc22fb39ee2",
+      "published_sha256": "61d386bc5ed7862d44205a1714448923811804c37de7c67caee02bfdcfa48f27",
+      "executable_ast_identical": true
+    },
+    "product_category_mapping.py": {
+      "original_sha256": "b2800e0b8d9f8a4fcc127de674c6bac9492286a7740ddc1e8b6aa1bc98c22dc6",
+      "published_sha256": "78611f9dceb5a306094eb1e6dba396b1f593513a8015095437adb4631cdfa7de",
+      "executable_ast_identical": true
+    }
+  }
+}

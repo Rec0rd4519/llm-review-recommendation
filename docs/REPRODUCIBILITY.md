@@ -20,7 +20,7 @@ The importer copies the required files to ignored `data/local` and refuses to ov
 
 On macOS/Linux, set the data path with `export RECOMMENDER_DATA_DIR="$(pwd)/data/local"`. Start a new app process after changing the variable; unset it to return to the demo.
 
-This release supports rerunning the comparison from prepared inputs. Rebuilding those inputs from raw reviews also requires the original extraction and manual review stages.
+This release supports rerunning the comparison from prepared inputs. The historical extraction and aggregation source is available under [research/](../research/README.md). Rebuilding inputs from raw reviews also requires the original data and approved manual taxonomy/category-review inputs; source publication alone does not supply those prerequisites.
 
 ## Result files
 

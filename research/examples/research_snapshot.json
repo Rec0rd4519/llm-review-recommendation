@@ -1,0 +1,412 @@
+{
+  "description": "Selected aggregates and recommendation outputs from the original prepared research data. This is a static inspection example, not the synthetic app dataset or a new quality evaluation.",
+  "selection": "First user in the research app; item B08C71WBLC is the top result for the shown moisturizer request. Up to six aspects are shown per profile.",
+  "omissions": "User identifiers, review text, quoted evidence, review identifiers and detailed source links are omitted. Numeric values and statuses are copied from the original profiles and saved local app responses.",
+  "dataset": {
+    "training_reviews": 2029,
+    "user_records": 253,
+    "users_with_in_scope_aspect_profiles": 250,
+    "reviews_for_in_scope_user_profiles": 1792,
+    "item_profiles": 341,
+    "in_scope_items": 297,
+    "extracted_aspect_evidence_pairs": 9255
+  },
+  "user_profile_excerpt": {
+    "review_count": 6,
+    "reviews_with_aspects": 6,
+    "aspect_profile_count": 23,
+    "valid_aspect_profile_count": 23,
+    "aspects": [
+      {
+        "profile_aspect": "bottle size",
+        "parent_category": "Physical Attributes & Design",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "preference_score": 1.0,
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "color variety",
+        "parent_category": "Product Variety & Selection",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "preference_score": 1.0,
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "durability",
+        "parent_category": "Quality & Durability",
+        "support_review_count": 1,
+        "positive_review_count": 0,
+        "neutral_review_count": 0,
+        "negative_review_count": 1,
+        "mixed_review_count": 0,
+        "preference_score": -1.0,
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "fit and hold mechanism",
+        "parent_category": null,
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "preference_score": 1.0,
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "flavor",
+        "parent_category": "Sensory Experience",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "preference_score": 1.0,
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "grease level",
+        "parent_category": null,
+        "support_review_count": 1,
+        "positive_review_count": 0,
+        "neutral_review_count": 0,
+        "negative_review_count": 1,
+        "mixed_review_count": 0,
+        "preference_score": -1.0,
+        "has_conflicting_reviews": false
+      }
+    ]
+  },
+  "item_profile_excerpt": {
+    "product_category": "Skin Care",
+    "product_type": "Hydrating Facial Treatment",
+    "scope_status": "in_scope",
+    "dataset_review_count": 4,
+    "rating_count": 4,
+    "mean_overall_rating": 4.75,
+    "aspect_profile_count": 16,
+    "aspects": [
+      {
+        "profile_aspect": "texture",
+        "support_review_count": 3,
+        "positive_review_count": 3,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "multi_review_support",
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "absorption",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "single_review_support",
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "absorption speed",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "single_review_support",
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "dispenser",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "single_review_support",
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "final feel",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "single_review_support",
+        "has_conflicting_reviews": false
+      },
+      {
+        "profile_aspect": "fragrance",
+        "support_review_count": 1,
+        "positive_review_count": 1,
+        "neutral_review_count": 0,
+        "negative_review_count": 0,
+        "mixed_review_count": 0,
+        "performance_score": 1.0,
+        "support_tier": "single_review_support",
+        "has_conflicting_reviews": false
+      }
+    ]
+  },
+  "recommendation_examples": [
+    {
+      "case": "preferences",
+      "query": "I need a moisturizer that absorbs quickly and feels non-greasy.",
+      "intent_provenance": "saved adopted development-query extraction",
+      "new_model_calls": 0,
+      "status": "ok",
+      "candidate_count": 38,
+      "displayed_recommendations": [
+        {
+          "rank": 1,
+          "parent_asin": "B08C71WBLC",
+          "product_category": "Skin Care",
+          "product_type": "Hydrating Facial Treatment",
+          "score": 0.927786,
+          "history_baseline_score": 0.63893,
+          "history_fallback": false,
+          "current_evidence_hint_score": 1.0,
+          "preference_checks": [
+            {
+              "requirement": "absorbs quickly",
+              "aspect": "absorption_speed",
+              "desired_value": "quickly",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            },
+            {
+              "requirement": "feels non-greasy",
+              "aspect": "greasiness",
+              "desired_value": "non-greasy",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            }
+          ],
+          "hard_constraint_statuses": [],
+          "retrieved_snippet_count": 2
+        },
+        {
+          "rank": 2,
+          "parent_asin": "B08P7PSMRR",
+          "product_category": "Skin Care",
+          "product_type": "Moisturizers and Facial Creams",
+          "score": 0.898116,
+          "history_baseline_score": 0.490582,
+          "history_fallback": false,
+          "current_evidence_hint_score": 1.0,
+          "preference_checks": [
+            {
+              "requirement": "absorbs quickly",
+              "aspect": "absorption_speed",
+              "desired_value": "quickly",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            },
+            {
+              "requirement": "feels non-greasy",
+              "aspect": "greasiness",
+              "desired_value": "non-greasy",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            }
+          ],
+          "hard_constraint_statuses": [],
+          "retrieved_snippet_count": 3
+        },
+        {
+          "rank": 3,
+          "parent_asin": "B07VDCD17L",
+          "product_category": "Skin Care",
+          "product_type": "Moisturizers and Facial Creams",
+          "score": 0.782925,
+          "history_baseline_score": 0.664626,
+          "history_fallback": false,
+          "current_evidence_hint_score": 0.75,
+          "preference_checks": [
+            {
+              "requirement": "absorbs quickly",
+              "aspect": "absorption_speed",
+              "desired_value": "quickly",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            },
+            {
+              "requirement": "feels non-greasy",
+              "aspect": "greasiness",
+              "desired_value": "non-greasy",
+              "direction": "prefer",
+              "status": "not_verified",
+              "score": 0.5
+            }
+          ],
+          "hard_constraint_statuses": [],
+          "retrieved_snippet_count": 3
+        },
+        {
+          "rank": 4,
+          "parent_asin": "B08H4SYXR4",
+          "product_category": "Skin Care",
+          "product_type": "Facial Cleanser, Serum and Moisturizer Set",
+          "score": 0.782847,
+          "history_baseline_score": 0.664234,
+          "history_fallback": false,
+          "current_evidence_hint_score": 0.75,
+          "preference_checks": [
+            {
+              "requirement": "absorbs quickly",
+              "aspect": "absorption_speed",
+              "desired_value": "quickly",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            },
+            {
+              "requirement": "feels non-greasy",
+              "aspect": "greasiness",
+              "desired_value": "non-greasy",
+              "direction": "prefer",
+              "status": "not_verified",
+              "score": 0.5
+            }
+          ],
+          "hard_constraint_statuses": [],
+          "retrieved_snippet_count": 3
+        },
+        {
+          "rank": 5,
+          "parent_asin": "B08HRNPNR5",
+          "product_category": "Skin Care",
+          "product_type": "Facial Treatments",
+          "score": 0.779191,
+          "history_baseline_score": 0.645954,
+          "history_fallback": false,
+          "current_evidence_hint_score": 0.75,
+          "preference_checks": [
+            {
+              "requirement": "absorbs quickly",
+              "aspect": "absorption_speed",
+              "desired_value": "quickly",
+              "direction": "prefer",
+              "status": "supporting_hint",
+              "score": 1
+            },
+            {
+              "requirement": "feels non-greasy",
+              "aspect": "greasiness",
+              "desired_value": "non-greasy",
+              "direction": "prefer",
+              "status": "not_verified",
+              "score": 0.5
+            }
+          ],
+          "hard_constraint_statuses": [],
+          "retrieved_snippet_count": 3
+        }
+      ],
+      "displayed_unverified_candidate_count": 0,
+      "excluded_hard_constraint_count": 0
+    },
+    {
+      "case": "hard_constraint",
+      "query": "I need a shampoo that must be sulfate-free.",
+      "intent_provenance": "saved adopted development-query extraction",
+      "new_model_calls": 0,
+      "status": "ok",
+      "candidate_count": 10,
+      "displayed_recommendations": [
+        {
+          "rank": 1,
+          "parent_asin": "B08RY6S25W",
+          "product_category": "Hair Care & Styling",
+          "product_type": "Purple Shampoo and Conditioner Set",
+          "score": 0.916253,
+          "history_baseline_score": 0.832505,
+          "history_fallback": false,
+          "current_evidence_hint_score": null,
+          "preference_checks": [],
+          "hard_constraint_statuses": [
+            "meets"
+          ],
+          "retrieved_snippet_count": 1
+        },
+        {
+          "rank": 2,
+          "parent_asin": "B0941YDPSW",
+          "product_category": "Hair Care & Styling",
+          "product_type": "Hair Care Products",
+          "score": 0.875,
+          "history_baseline_score": 0.75,
+          "history_fallback": true,
+          "current_evidence_hint_score": null,
+          "preference_checks": [],
+          "hard_constraint_statuses": [
+            "meets"
+          ],
+          "retrieved_snippet_count": 0
+        },
+        {
+          "rank": 3,
+          "parent_asin": "B08QKXY1KN",
+          "product_category": "Hair Care & Styling",
+          "product_type": "Purple Shampoo and Conditioner Set",
+          "score": 0.811321,
+          "history_baseline_score": 0.622641,
+          "history_fallback": false,
+          "current_evidence_hint_score": null,
+          "preference_checks": [],
+          "hard_constraint_statuses": [
+            "meets"
+          ],
+          "retrieved_snippet_count": 3
+        },
+        {
+          "rank": 4,
+          "parent_asin": "B07VGBBNTH",
+          "product_category": "Hair Care & Styling",
+          "product_type": "Hair Care Products",
+          "score": 0.756455,
+          "history_baseline_score": 0.512911,
+          "history_fallback": false,
+          "current_evidence_hint_score": null,
+          "preference_checks": [],
+          "hard_constraint_statuses": [
+            "meets"
+          ],
+          "retrieved_snippet_count": 3
+        }
+      ],
+      "displayed_unverified_candidate_count": 5,
+      "excluded_hard_constraint_count": 0
+    },
+    {
+      "case": "clarification",
+      "query": "For a nail polish, color is no more important to me than drying speed.",
+      "intent_provenance": "saved adopted development-query extraction",
+      "new_model_calls": 0,
+      "status": "needs_clarification",
+      "candidate_count": 0,
+      "displayed_recommendations": [],
+      "displayed_unverified_candidate_count": 0,
+      "excluded_hard_constraint_count": 0
+    }
+  ]
+}

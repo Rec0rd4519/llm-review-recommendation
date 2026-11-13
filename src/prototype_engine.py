@@ -181,6 +181,7 @@ class PrototypeEngine:
             ('INTENT-BEAUTY-002','INTENT-BEAUTY-003','INTENT-BEAUTY-004','INTENT-BEAUTY-005',
              'INTENT-BEAUTY-007','NEW-BEAUTY-009','NEW-BEAUTY-016')]
         return {'baseline':C.POLICY_VERSION,
+                'data_mode':'synthetic_demo' if runtime_config.IS_DEMO else 'external_research_data',
                 'users':[{'user_id':u,'review_count':r['review_count']} for u,r in self.users.items()],
                 'categories':sorted({m['final_product_category'] for m in self.mapping.values()}),
                 'examples':[{'query':r['original_query'],'id':r['intent_id']} for r in examples],

@@ -1,8 +1,8 @@
 {
   "package": "Review Compass portable GitHub candidate",
-  "created_at_utc": "2026-11-13T02:47:00.255999+00:00",
-  "includes": "Portable source, prompts, JSON schema, fictional demo data, tests, English documentation and aggregate research reports.",
-  "excluded": "Raw research datasets, real user histories, historical run logs, environments, models and git metadata.",
+  "created_at_utc": "2026-11-13T06:15:59.238469+00:00",
+  "includes": "Portable app, historical research source, original-data aggregates and selected score outputs, prompts, schema, fictional runnable data, tests and English documentation.",
+  "excluded": "Original third-party review text, real user identifiers, full research datasets, private run logs, environments, model weights, and Git metadata.",
   "license": "Not selected; see LICENSE_SELECTION.md.",
   "source_files": {
     ".gitattributes": {
@@ -10,8 +10,20 @@
       "sha256": "4b7e72beda5126a257245721244c321edbdb2357dc9c1f8acfabcc3c13b13150"
     },
     ".gitignore": {
-      "bytes": 232,
-      "sha256": "622025aa8698e88053f626553d86b1cb634da100d3b5dc325bd601666926ed34"
+      "bytes": 268,
+      "sha256": "99a6ad9771762eea9c6bc7bb7f20d5be518ba9e34fb6316abb15e316787935ce"
+    },
+    "LICENSE_SELECTION.md": {
+      "bytes": 279,
+      "sha256": "130da129e04de52ae0472f3d534c0c281a284ad3d50d81cb853dafc21d98f4e1"
+    },
+    "README.md": {
+      "bytes": 5647,
+      "sha256": "159d956c556e28821957b2f6fc6fb9d44f75cacc97c4f710d3edd9d30617b9ff"
+    },
+    "data/demo/DATA_CARD.md": {
+      "bytes": 1161,
+      "sha256": "63e2d3fe4f463ed53a024cb8e74263f5d4489c7abad49d35eb663d5ed3dddf76"
     },
     "data/demo/benchmark/All_Beauty.train.csv": {
       "bytes": 387,
@@ -20,10 +32,6 @@
     "data/demo/catalog_metadata.jsonl": {
       "bytes": 2384,
       "sha256": "33058bf00d7c9cc777a2ece61372367fe3565b158a0c148239427c97f4a91381"
-    },
-    "data/demo/DATA_CARD.md": {
-      "bytes": 1161,
-      "sha256": "63e2d3fe4f463ed53a024cb8e74263f5d4489c7abad49d35eb663d5ed3dddf76"
     },
     "data/demo/intent_results.jsonl": {
       "bytes": 4158,
@@ -58,20 +66,16 @@
       "sha256": "0844eddbf3e686ea7fa18bf58a007edc549c6828cc6e240c3d4a2d87100a6950"
     },
     "docs/ARCHITECTURE.md": {
-      "bytes": 3002,
-      "sha256": "e4b8bcb2fb3250f36de69b99b5034c0dadfea2f53b2b2f63fd6787dbe3279719"
+      "bytes": 3119,
+      "sha256": "7a8ab8a381f274795032f548a586f0806bfab41eeff75df572912e8a7dc51d1d"
     },
     "docs/PUBLISHING.md": {
       "bytes": 1790,
       "sha256": "6a4d67cdf9768a8d22241154acc2ec10c7dbc26770a71d9e9ac2c2b999149556"
     },
     "docs/REPRODUCIBILITY.md": {
-      "bytes": 2140,
-      "sha256": "7b2a7c67329c93a63907d31b70bebb6553b2d4f73624cbc54801a98643bc04e8"
-    },
-    "LICENSE_SELECTION.md": {
-      "bytes": 279,
-      "sha256": "130da129e04de52ae0472f3d534c0c281a284ad3d50d81cb853dafc21d98f4e1"
+      "bytes": 2321,
+      "sha256": "92ae43e77eb2f6d889c199557be2ee7d117462bd93d574840c528960df5b0e31"
     },
     "prompts/current_intent_correction.txt": {
       "bytes": 1576,
@@ -80,10 +84,6 @@
     "prompts/current_intent_system.txt": {
       "bytes": 10301,
       "sha256": "d0c18fd6dfc36b337894e942b27413d4c995692589b172afb0e2ce9e2b9803e8"
-    },
-    "README.md": {
-      "bytes": 4623,
-      "sha256": "f2b3d5e6cbe7ccce0a7033f83dbf6f545815c0c03d9daa6f4aae9702141107b4"
     },
     "reports/bm25_retrieval.md": {
       "bytes": 2962,
@@ -102,12 +102,76 @@
       "sha256": "9591d9cb628273e445039ba12f08fb5177d9b01d58c17d33e4e3920920f1501f"
     },
     "reports/portability_verification.json": {
-      "bytes": 1711,
-      "sha256": "eb06fc838d2b08c511021458d53f1e1bf3184e45cd501f077bbf287bada12874"
+      "bytes": 2065,
+      "sha256": "63863ee3839d45899e59fc3a3658fcef427104f17d77e74dae29e6de9e80e995"
     },
     "requirements.txt": {
       "bytes": 149,
       "sha256": "f85f2c0fccb2afadd66741fca00434feb873fff01c11ee68ee4411b09e20b4c7"
+    },
+    "research/README.md": {
+      "bytes": 5245,
+      "sha256": "2371aa9e4a941513fb5fd045950881707a1fdb85da2a54d1fcb55a7d7765d70c"
+    },
+    "research/examples/research_snapshot.json": {
+      "bytes": 13854,
+      "sha256": "412e316d2937c2d67fa145268e9f2bfb203a51380072d7d0ba1252af0da9f238"
+    },
+    "research/requirements.txt": {
+      "bytes": 104,
+      "sha256": "c4ec73bec53a0e1fc6e96135fefafeb89e47f56ffd2316f8b40b62b7a1057024"
+    },
+    "research/source_manifest.json": {
+      "bytes": 3389,
+      "sha256": "b6f16b85a68cffb889d07340c71ff153650edbff024db38acd63d16e71d0d4a1"
+    },
+    "research/src/align_reviews.py": {
+      "bytes": 4231,
+      "sha256": "533014b149881dda86e9244d742fe2ef0cf83af923327a9f5dfcca459c79fc43"
+    },
+    "research/src/aspect_extraction.py": {
+      "bytes": 4646,
+      "sha256": "ca685a9c5b7a88d97085def456527284c6ec7d9df494fed693d33153b89bb6ea"
+    },
+    "research/src/audit_aspect_extraction.py": {
+      "bytes": 5648,
+      "sha256": "26d22a28825b7cc1091033ac8155f845e5be3c168101fcec612cd9fcde29ccc1"
+    },
+    "research/src/build_item_profiles.py": {
+      "bytes": 35329,
+      "sha256": "d4f515e3e2ac4be2c56d1f2344198e137a785f88d1909a633ef9b3ee91fe84f3"
+    },
+    "research/src/build_user_item_matching_in_scope.py": {
+      "bytes": 28580,
+      "sha256": "61d386bc5ed7862d44205a1714448923811804c37de7c67caee02bfdcfa48f27"
+    },
+    "research/src/build_user_profiles.py": {
+      "bytes": 21083,
+      "sha256": "62dce0e1b7bb6b3fac631b17eadee6835ee176303ea5588bd6dfe0e01f0ca1f6"
+    },
+    "research/src/build_user_profiles_in_scope.py": {
+      "bytes": 25195,
+      "sha256": "b267a1d0b15bbbb52a7010d6b71a72c1835cf069abe79325677d025f0ad040cd"
+    },
+    "research/src/full_aspect_extraction.py": {
+      "bytes": 5233,
+      "sha256": "b21766f52a5b4c10a09cb10cf07a8b66f96a378bb7a7d6b84aa9cc0f5d11ac36"
+    },
+    "research/src/prepare_aspect_data.py": {
+      "bytes": 23193,
+      "sha256": "841883d2015570fcc8341c92751148337b17e537a9f326c1eddfb0dbc4ce186a"
+    },
+    "research/src/prepare_dataset.py": {
+      "bytes": 4342,
+      "sha256": "92bf0010bd967411b4d74d6158e8d9953c55f24ed0b185726d2d6e223f1c3073"
+    },
+    "research/src/prepare_profile_data.py": {
+      "bytes": 17387,
+      "sha256": "ceefd47f4b8d4d1d00c170c70d6a683804bd21193511569d13246cfb0a08cafe"
+    },
+    "research/src/product_category_mapping.py": {
+      "bytes": 5436,
+      "sha256": "78611f9dceb5a306094eb1e6dba396b1f593513a8015095437adb4631cdfa7de"
     },
     "scripts/demo_comparison.py": {
       "bytes": 1178,
@@ -138,12 +202,12 @@
       "sha256": "c019bd5105e6ff22dfd81339c544fb849db84aebf7b617825dd9c6d05936026e"
     },
     "src/prototype_engine.py": {
-      "bytes": 22734,
-      "sha256": "0fdf45ad55fea382708d76795449ff37f0fc131bf85024a47d41a17bd7b0632a"
+      "bytes": 22836,
+      "sha256": "3347b829f417f79b87c2d4cbb8c66c87c6cbf6a01a79945f2b621d988b497467"
     },
     "src/prototype_ui.html": {
-      "bytes": 13493,
-      "sha256": "f6c9ff54191dbc86437fa933114afd8e9a1d2fa406557a8eed216245bbd5a0f0"
+      "bytes": 13806,
+      "sha256": "71b0bc6320abdfe449e7e4a631b8537ae7320b040d534953e1b53d8cb1371db6"
     },
     "src/run_offline_ranking_experiment_v1.py": {
       "bytes": 18901,

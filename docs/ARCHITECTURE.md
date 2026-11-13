@@ -8,7 +8,7 @@ In the original research pipeline, a local LLM extracted attributes, sentiment, 
 
 Historical matching weights an attribute by `log(1 + supporting review count)`. It combines these attention weights with smoothed item-quality scores. Historical sentiment remains available for explanation; its sign alone does not specify the attribute value a user wants today.
 
-The public demo uses constructed profiles and scores over fictional reviews. The original extraction, taxonomy review, and category-audit pipeline is not included in the portable app.
+The public demo uses constructed profiles and scores over fictional reviews. Historical extraction, evidence-checking, and profile-building code is available under [research/](../research/README.md). Manual taxonomy and category-audit inputs are not bundled; the portable app consumes prepared files.
 
 ## Current request
 

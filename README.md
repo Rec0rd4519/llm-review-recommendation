@@ -1,10 +1,18 @@
-# Review Compass
+# LLM-Assisted Review-Based Personalized Recommendation
 
-A local recommendation prototype that combines a user's review history with their current shopping request. Results include the review snippets and catalog details used to score each product.
+A pilot implementation for a research proposal on review-based recommendation. The project explores how review-derived user and item representations can be coordinated with explicitly stated current requirements, while retaining supporting evidence for inspection.
 
-The project uses a local LLM for intent extraction, attribute-level profiles for historical matching, and BM25 for review retrieval. A separate experiment compares four ranking strategies.
+The original study processed **2,029 training reviews from 253 users**, constructed **341 item profiles**, and used **297 in-scope products** for recommendation. A separate offline experiment compares four ranking strategies.
 
-## Try the demo
+## Inspect the research version
+
+- [Research implementation and data flow](research/README.md): historical LLM extraction, evidence checks, profile aggregation, and baseline scoring code.
+- [Selected original-data outputs](research/examples/research_snapshot.json): actual profile statistics and three recommendation cases, with user identifiers and review text omitted.
+- [Offline experiment report](reports/offline_ranking_comparison.md): methods, results, denominators, and limitations.
+
+The research implementation and its results are separate from the **3-user synthetic quick-start dataset** below. Original review data and manual audit workbooks are not bundled; [reproduction instructions](docs/REPRODUCIBILITY.md) describe the required prepared inputs.
+
+## Run the interactive demo (synthetic data)
 
 Python 3.11 or later is required. In the project directory, run:
 
@@ -67,7 +75,8 @@ The research data is separate from the public demo. This repository includes agg
 ## Project layout
 
 ```text
-src/          app, intent extraction, retrieval, and ranking
+research/     historical research code and selected original-data outputs
+src/          portable app, intent extraction, retrieval, and ranking
 prompts/      extraction and correction prompts
 data/demo/    fictional demo data and saved example intents
 data/schemas/ intent JSON schema
